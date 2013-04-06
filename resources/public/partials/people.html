@@ -1,2 +1,13 @@
 <h2>People</h2>
 <hr/>
+<div class="right">
+  <button class="small button" ng-click="setSelected('all');">Show All</button>
+  <button class="small button" ng-click="setSelected('addPerson');">Add Person</button>
+</div>
+
+<div ng-show="getShow('all')">
+  <h4>Show All</h4>
+</div>
+<div ng-show="getShow('addPerson')">
+  <h4>Add Person</h4>
+</div>
