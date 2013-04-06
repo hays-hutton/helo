@@ -1,8 +1,8 @@
 <h2>People</h2>
 <hr/>
 <div class="right">
-  <button class="small button" ng-click="setSelected('all');">Show All</button>
-  <button class="small button" ng-click="setSelected('addPerson');">Add Person</button>
+  <button class="tiny button" ng-click="setSelected('all');">Show All</button>
+  <button class="tiny button" ng-click="setSelected('addPerson');">Add Person</button>
 </div>
 
 <div ng-show="getShow('all')">
@@ -10,4 +10,68 @@
 </div>
 <div ng-show="getShow('addPerson')">
   <h4>Add Person</h4>
+  <form>
+    <fieldset>
+      <legend>Person</legend>
+
+      <div class="row">
+        <div class="small-2 columns">
+          <label>Salutation</label>
+          <input type="text" ng-model="salutation" placeholder="salutation"/>
+        </div>
+        <div class="small-5 columns">
+          <label>First Name</label>
+          <input type="text" ng-model="firstName" placeholder="first"/>
+        </div>
+        <div class="small-5 columns">
+          <label>Last Name</label>
+          <input type="text" ng-model="lastName" placeholder="last"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-12 columns">
+          <label>Address</label>
+          <input type="text" ng-model="address" placeholder="address"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-6 columns">
+          <label>Cell</label>
+          <input type="tel" ng-model="cell" placeholder="Cell Phone"/>
+        </div>
+        <div class="small-6 columns">
+          <label>Work</label>
+          <input type="tel" ng-model="work" placeholder="Work Phone"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-6 columns">
+          <label>Home</label>
+          <input type="tel" ng-model="home" placeholder="Home Phone"/>
+        </div>
+        <div class="small-6 columns">
+          <label>Fax</label>
+          <input type="tel" ng-model="fax" placeholder="Fax"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="small-12 columns">
+          <label>Note</label>
+          <textarea ng-model="note"></textarea>
+        </div>
+      </div>
+
+    </fieldset>
+  </form>
+  <div class="row">
+    <div class="small-12 columns">
+      {{salutation}} {{firstName}} {{lastName}}
+    </div>
+    <div class="small-12 columns">
+      {{address}}
+    </div>
 </div>
