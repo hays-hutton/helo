@@ -1,12 +1,18 @@
 <h2>People</h2>
 <hr/>
+<div class="alert-box" ng-class="messageType" ng-show="messageType">
+  {{message}}
+  <a ng-click="resetMessage()" class="close">&times;</a>
+</div>
+
 <div class="right">
-  <button class="tiny button" ng-click="setSelected('all');">Show All</button>
-  <button class="tiny button" ng-click="setSelected('addPerson');">Add Person</button>
+  <button class="tiny button" ng-class="getShow('all')" ng-click="setSelected('all');">Show All</button>
+  <button class="tiny button" ng-class="getShow('addPerson')" ng-click="setSelected('addPerson');">Add Person</button>
 </div>
 
 <div ng-show="getShow('all')">
   <h4>Show All</h4>
+  A list of Data 
 </div>
 <div ng-show="getShow('addPerson')">
   <h4>Add Person</h4>
@@ -74,4 +80,9 @@
     <div class="small-12 columns">
       {{address}}
     </div>
+  <div class="row">
+    <div class="small-12 columns">
+      <button class="small" ng-click="addPerson()">Add Person</button>
+    </div>
+  </div>
 </div>
