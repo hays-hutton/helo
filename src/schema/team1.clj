@@ -10,20 +10,6 @@
    :db.install/_attribute :db.part/db
   }
 
-  ;; An External Key. Every entity has to have one. It is generic too.
-  {:db/id #db/id[:db.part/db]
-   :db/ident :uuid
-   :db/valueType :db.type/uuid
-   :db/unique :db.unique/identity
-   :db/index true
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
-  ;; Keep trying to ident entities by assuming a namespaced key
-  ;; why not just type it then can query a generic key?
-  ;; When moved away from a well known :{entity-type}/uuid, there is a requirement
-  ;; to have something well-known to select on
   {:db/id #db/id[:db.part/db]
    :db/ident :type
    :db/valueType :db.type/ref
@@ -36,9 +22,7 @@
   [:db/add #db/id [:db.part/user] :db/ident :type/org]
   [:db/add #db/id [:db.part/user] :db/ident :type/referral]
   [:db/add #db/id [:db.part/user] :db/ident :type/note]
-  [:db/add #db/id [:db.part/user] :db/ident :type/cchannel]
   [:db/add #db/id [:db.part/user] :db/ident :type/comm]
-  [:db/add #db/id [:db.part/user] :db/ident :type/address]
 
   ;; Every entity should have one of these. That way clients can assume it.
   {:db/id #db/id[:db.part/db]
@@ -72,7 +56,6 @@
    :db/index true
   }
 
-  ;who did the last update?
   {:db/id #db/id[:db.part/db]
    :db/ident :updated-by
    :db/valueType :db.type/ref
@@ -113,12 +96,16 @@
   {:db/id #db/id[:db.part/db]
    :db/ident :person/type
    :db/valueType :db.type/ref
-   :db/cardinality :db.cardinality/one
+   :db/cardinality :db.cardinality/many
    :db.install/_attribute :db.part/db
   }
 
   [:db/add #db/id [:db.part/user] :db/ident :person.type/team-member]
-  [:db/add #db/id [:db.part/user] :db/ident :person.type/partner]
+  [:db/add #db/id [:db.part/user] :db/ident :person.type/csr]
+  [:db/add #db/id [:db.part/user] :db/ident :person.type/agent]
+  [:db/add #db/id [:db.part/user] :db/ident :person.type/producer]
+  [:db/add #db/id [:db.part/user] :db/ident :person.type/adjuster]
+  [:db/add #db/id [:db.part/user] :db/ident :person.type/claims]
   [:db/add #db/id [:db.part/user] :db/ident :person.type/client]
   [:db/add #db/id [:db.part/user] :db/ident :person.type/vendor]
 
@@ -397,23 +384,12 @@
 
   [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/cell]
   [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/sms]
-  [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/phone]
+  [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/home]
+  [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/work]
   [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/fax]
   [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/email]
   [:db/add #db/id [:db.part/user] :db/ident :cchannel.type/unknown]
  
-  {:db/id #db/id[:db.part/db]
-   :db/ident :cchannel/category
-   :db/valueType :db.type/ref
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
-  [:db/add #db/id [:db.part/user] :db/ident :cchannel.category/home]
-  [:db/add #db/id [:db.part/user] :db/ident :cchannel.category/work]
-  [:db/add #db/id [:db.part/user] :db/ident :cchannel.category/cell]
-  [:db/add #db/id [:db.part/user] :db/ident :cchannel.category/unknown]
-
   {:db/id #db/id[:db.part/db]
    :db/ident :cchannel/primary
    :db/valueType :db.type/boolean
@@ -422,11 +398,15 @@
   }
   
   {:db/id #db/id[:db.part/db]
-   :db/ident :cchannel/routes
+   :db/ident :cchannel/route
    :db/valueType :db.type/ref
    :db/cardinality :db.cardinality/many
    :db.install/_attribute :db.part/db
   }
+
+  [:db/add #db/id [:db.part/user] :db/ident :cchannel.route/client]
+  [:db/add #db/id [:db.part/user] :db/ident :cchannel.route/vendor]
+  [:db/add #db/id [:db.part/user] :db/ident :cchannel.route/partner]
 
   {:db/id #db/id[:db.part/db]
    :db/ident :cchannel/callerName
@@ -442,28 +422,6 @@
    :db.install/_attribute :db.part/db
   }
 
-  {:db/id #db/id[:db.part/db]
-   :db/ident :user/user
-   :db/valueType :db.type/string
-   :db/cardinality :db.cardinality/one
-   :db/unique :db.unique/identity
-   :db/index true
-   :db.install/_attribute :db.part/db
-  }
-
-  {:db/id #db/id[:db.part/db]
-   :db/ident :user/password
-   :db/valueType :db.type/string
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
-  {:db/id #db/id[:db.part/db]
-   :db/ident :user/roles
-   :db/valueType :db.type/ref
-   :db/cardinality :db.cardinality/many
-   :db.install/_attribute :db.part/db
-  }
 
   [:db/add #db/id [:db.part/user] :db/ident :role.person/client]
   [:db/add #db/id [:db.part/user] :db/ident :role.person/partner]

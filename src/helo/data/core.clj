@@ -40,5 +40,6 @@
 
 (defn post []
   (fn [tran]
+    @(d/transact conn tran)
     (println "The record: " tran)
-    (json/encode {:status 200 :message (first tran) })))
+    (json/encode {:status 200 :message "tran"})))
