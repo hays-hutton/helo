@@ -10,10 +10,10 @@
 (defn get-persons []
   (println "service/get-persons"))
 
+;POST to /persons -> Create a Person
 (defn post-persons [{params :params}]
-  (println "service/post-persons: " params)
-  (pers/p-persons params)
-  )
+  (let [params* (core/assoc-geocode params)]
+    (pers/create-person params*)))
 
 (defn update-person [request]
   (println "service/update-persons: " request))

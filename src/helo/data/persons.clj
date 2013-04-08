@@ -1,28 +1,34 @@
 (ns helo.data.persons
   (:use [datomic.api :only [db q] :as d]
         [helo.data.core :only [conn] :as core]
+        [helo.data.address :as addr]
         [helo.utils.uri :as utils]
         [clj-time.core :only [from-now minutes weeks] ]
         [clj-time.coerce :only [to-date] ]
         [clojure.tools.logging :only [info error]]))
 
-(def valid-person-request-keys
+(def person-record-keys
   [:person/first-name
    :person/last-name
    :person/org
    :person/acct-mgr
+   :person/email
    :person/cell
    :person/home
    :person/work
    :person/fax
-   :note/note
-   :address/address])
+   :note/note])
 
-(def post-persons 
-  (core/valid-keys (core/min-required-keys (core/post) [:person/last-name :person/cell])  valid-person-request-keys) )
+(def valid-keys (vec (flatten (conj person-record-keys addr/address-record-keys))))
 
-(def p-persons
+(def required-record-keys
+  [:person/last-name
+   :person/first-name])
+
+(def create-person
   (-> (core/post)
-      (core/min-required-keys [:person/last-name :person/cell :person/first-name])
-      (core/valid-keys valid-person-request-keys)
-      (core/remove-empty-keys)))
+      (core/add-key)
+      (core/min-required-keys required-record-keys)
+      (core/valid-keys valid-keys)
+      (core/remove-empty-keys)
+))

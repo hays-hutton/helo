@@ -45,6 +45,7 @@ function PeopleCtrl($scope, $http) {
     $http.post('/persons', {"person/first-name": $scope.firstName,
                             "person/last-name": $scope.lastName,
                             "address/address": $scope.address,
+                            "person/email": $scope.email,
                             "person/cell": $scope.cell,
                             "person/home": $scope.home,
                             "person/work": $scope.work,
