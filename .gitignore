@@ -1,4 +1,6 @@
 /target
+/resources/public/css
+/resources/.sass-cache
 /lib
 /classes
 /checkouts
