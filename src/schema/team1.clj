@@ -22,6 +22,7 @@
   [:db/add #db/id [:db.part/user] :db/ident :type/org]
   [:db/add #db/id [:db.part/user] :db/ident :type/referral]
   [:db/add #db/id [:db.part/user] :db/ident :type/note]
+  [:db/add #db/id [:db.part/user] :db/ident :type/cchannel]
   [:db/add #db/id [:db.part/user] :db/ident :type/comm]
 
   ;; Every entity should have one of these. That way clients can assume it.
@@ -524,5 +525,29 @@
    :db/cardinality :db.cardinality/one
    :db.install/_attribute :db.part/db
   }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :user/user
+   :db/valueType :db.type/string
+   :db/cardinality :db.cardinality/one
+   :db/unique :db.unique/identity
+   :db/index true
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :user/password
+   :db/valueType :db.type/string
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :user/roles
+   :db/valueType :db.type/ref
+   :db/cardinality :db.cardinality/many
+   :db.install/_attribute :db.part/db
+  }
+
 
 ]

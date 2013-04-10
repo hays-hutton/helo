@@ -134,6 +134,7 @@
 
 ;Team role with R privilege
 (defroutes team-read-routes
+  (route/resources "/" )
   (GET "/orgs" request  (org/get-orgs))
   (GET "/orgs/:id" request  (org/get-org request))
   (GET "/persons" request  (per/get-persons))
@@ -155,7 +156,8 @@
 
 (defroutes the-routes 
   (GET "/" [] (resp/file-response "index.html" {:root "resources/public"}))
-  (route/resources "/" )
+  (GET "/auth.html" [] (resp/file-response "auth.html" {:root "resources/public"}))
+  (GET "/refer.html" [] (resp/file-response "refer.html" {:root "resources/public"}))
   (wrap-auth team-read-routes #{:role.person/team-member})
   (wrap-auth team-write-routes #{:role.person/team-member})
   (POST "/request-pin" [cell]  (request-pin cell))

@@ -40,6 +40,8 @@
 
 (defn post []
   (fn [tran]
-    @(d/transact conn tran)
-    (println "The record: " tran)
-    (json/encode {:status 200 :message "tran"})))
+    (try 
+      @(d/transact conn tran)
+      (println "The record: " tran)
+      {:status 200 :body (json/encode {:message "tran"})}
+      (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))

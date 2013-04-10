@@ -10,6 +10,9 @@
         [clj-time.coerce :only [to-date] ]
         [clojure.tools.logging :only [info error]]))
 
+
+
+;TODO does :who belong here?
 (def person-record-keys
   [:person/first-name
    :person/last-name
@@ -107,6 +110,7 @@
       (add-sms)
       (add-email)
       (add-phone :person/fax :cchannel.type/fax)
+      (add-phone :person/work :cchannel.type/work)
       (add-phone :person/home :cchannel.type/phone)
       (add-phone :person/cell :cchannel.type/cell)
       (core/add-key)
