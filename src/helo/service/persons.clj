@@ -4,11 +4,16 @@
           [cheshire.core :as json]))
 
 ;;TODO fix :id versus :uuid
-(defn get-person [request]
-  (println "service/get-person: " request))
+(defn get-person [id]
+  (println "service/get-person: " id)
+  (pers/read-person id)
+)
 
-(defn get-persons []
-  (println "service/get-persons"))
+(defn get-persons [request]
+  (println "service/get-persons")
+  (pers/read-persons request )
+
+)
 
 ;POST to /persons -> Create a Person
 (defn post-persons [{params :params}]

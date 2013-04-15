@@ -4,7 +4,7 @@
 // Declare app level module which depends on filters, and services
 // templates currently differ in one spot based on some css for collections vs entity
 // there is a way to fix that
-var helo = angular.module('helo', []).
+var helo = angular.module('helo', ['ui']).
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/referrals', {templateUrl: 'partials/referrals.html', controller: ReferralsCtrl});
     $routeProvider.when('/referrals/:id', {templateUrl: 'partials/referral.html', controller: ReferralCtrl});

@@ -1,1 +1,85 @@
-<h3>Person</h3>
+<h2>{{person.name}} -- Person</h2>
+<hr/>
+<div class="alert-box" ng-class="messageType" ng-show="messageType">
+  {{message}}
+  <a ng-click="resetMessage()" class="close">&times;</a>
+</div>
+
+<div class="row">
+  <div class="small-12 columns">
+    <div class="right">
+      <button class="tiny button" ng-class="getShow('view')" ng-click="setSelected('view');">View</button>
+      <button class="tiny button" ng-class="getShowNote()" ng-click="toggleNote();">Note</button>
+      <button class="tiny button" ng-class="getShow('edit')" ng-click="setSelected('edit');">Edit</button>
+    </div>
+  </div>
+</div>
+
+<div ng-show="getShowNote()">
+  <div class="row">
+    <div class="small-12 columns">
+      Hello note
+ 
+    </div>
+  </div>
+</div>
+
+<div ng-show="getShow('view')">
+  <div class="row">
+    <div class="columns small-4">
+      <h4>Address</h4>
+      <hr/>
+      <div>{{person['person/first-name']}} {{person['person/last-name']}}</div>
+      <div>{{person['address/street']}}</div>
+      <div>{{person['address/city']}}, {{person['address/region']}} {{person['address/postal-code']}}</div>
+      <div id="map-canvas" ui-map="myMap" ui-options="mapOptions" class="map">hello</div>
+    </div>
+
+    <div class="columns small-8">
+      <div class="row">
+        <div class="columns small-6">
+          <h4>CChannels</h4>
+          <hr/>
+          <div ng-repeat="cchan in person.cchannels">
+            <a ng-href="#/cchannels/{{cchan.id}}">{{cchan.name}}</a>
+          </div>
+        </div>
+        <div class="columns small-6">
+          <h4>Activity</h4>
+          <hr/>
+          <div>{{person.updated | date:'short'}} last update </div>
+          <div>{{person.created | date:'short'}} created at</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="columns small-4">
+          <h4>Notes</h4>
+          <div ng-repeat="note in person.notes">
+            <div>{{note.name}}</div>
+            <div>By: <a ng-href="#/persons/{{note['by-id']}}">{{note['by-name']}}</a></div>
+            <div>At: {{note.created | date:small}}</div>
+          </div>
+        </div>
+        <div class="columns small-4">
+          <h4>Referrals</h4>
+          <hr/>
+          <div ng-repeat="refer in person.referrals">
+            hello
+          </div>
+        </div>
+        <div class="columns small-4">
+          <h4>Jobs</h4>
+          <hr/>
+          <div ng-repeat="job in person.jobs">
+            hello
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div ng-show="getShow('edit')">
+edit
+</div>
+ 
