@@ -76,6 +76,7 @@ function PeopleCtrl($scope, $http) {
 }
 
 function PersonCtrl($scope, $routeParams, $http) {
+  $scope.data = [0, 5, 3,2,4,5,2,3,1,0,0,2,1,3,2,1,2,3,5,0,0,1,3];
 
   $scope.latitude = 34.555;
   $scope.longitude = -35.333;

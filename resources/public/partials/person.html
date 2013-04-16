@@ -49,6 +49,8 @@
           <hr/>
           <div>{{person.updated | date:'short'}} last update </div>
           <div>{{person.created | date:'short'}} created at</div>
+          <h5 ui-jq="sparkline" ui-options="data,{type: 'bar'}"></h5>
+          <h5 ui-jq="sparkline" ui-options="data,{type: 'line'}"></h5>
         </div>
       </div>
       <div class="row">
