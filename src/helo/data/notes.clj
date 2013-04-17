@@ -1,12 +1,21 @@
 (ns helo.data.notes
-  (:use [datomic.api :only [db q] :as d]
-        [helo.data.core :only [conn] :as core]
-        [helo.utils.uri :as utils]
-        [clojure.string :as string]
-        [clj-time.core :only [from-now minutes weeks] ]
-        [clj-time.coerce :only [to-date] ]
-        [clojure.tools.logging :only [info error]]))
+  (:require [datomic.api :only [db q] :as d]
+            [helo.data.core :only [conn] :as core]
+            [clojure.tools.logging :only [info error]]))
 
+;TODO does :who really belong here?
+(def valid-keys
+  [:note/note
+   :note/by
+   :note/parent
+   :note/visibility
+   :who])
+
+(def required-record-keys 
+  [:note/note
+   :note/parent])
+
+;TODO is this even used?
 (defn note-map [parent-id note who]
   (let [tstamp (java.util.Date.)
         length (count note)]
@@ -22,3 +31,24 @@
      :created tstamp
      :type :type/note
     }))
+
+
+(defn add-defaults [handler]
+  (fn [tran]
+    (let [note-m (first tran)
+          note (:note/note note-m)
+          parent (Long/parseLong (:note/parent note-m))
+          length (count note)
+          nme (if (< length 130) note (subs note 0 130))
+          who (:who note-m)
+          note-m* (dissoc note-m :who)
+          tstamp (java.util.Date.)]
+      (handler [(merge note-m* {:name nme :note/by who :note/parent parent :created-by who :updated-by who :created tstamp :updated tstamp :type :type/note})]))))
+
+(def create-note
+  (-> (core/post)
+      (add-defaults)
+      (core/add-key)
+      (core/min-required-keys required-record-keys)
+      (core/valid-keys valid-keys)
+      (core/remove-empty-keys)))

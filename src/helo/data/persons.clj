@@ -1,14 +1,14 @@
 (ns helo.data.persons
-  (:use [datomic.api :only [db q] :as d]
-        [helo.data.core :only [conn] :as core]
-        [helo.data.address :as addr]
-        [helo.data.cchannels :as cchan]
-        [helo.data.notes :as notes]
-        [helo.utils.uri :as utils]
-        [cheshire.core :as json]
-        [clj-time.core :only [from-now minutes weeks] ]
-        [clj-time.coerce :only [to-date] ]
-        [clojure.tools.logging :only [info error]]))
+  (:use [datomic.api :only [db q] :as d])
+  (:require [helo.data.core :as core]
+            [helo.data.address :as addr]
+            [helo.data.cchannels :as cchan]
+            [helo.data.notes :as notes]
+            [helo.utils.uri :as utils]
+            [cheshire.core :as json]
+            [clj-time.core :only [from-now minutes weeks] ]
+            [clj-time.coerce :only [to-date] ]
+            [clojure.tools.logging :only [info error]]))
 
 
 
@@ -132,13 +132,13 @@
 
 (defn persons-query []
   (fn [request]
-    (let [dbval (db conn)
+    (let [dbval (db core/conn)
           quer '{:find [?e ?updated ?name]
                 :in [$]
                 :where [[?e :type :type/person]
                         [?e :name ?name]
                         [?e :updated ?updated]]} ]
-      (q quer dbval))))
+      (d/q quer dbval))))
 
 (defn sort-by-second [handler]
   (fn [request]
@@ -222,7 +222,7 @@
 (defn person-query []
   (fn [id]
     (println "hello" id)
-    (let [dbval (db conn)
+    (let [dbval (db core/conn)
           nid (Long/parseLong id)
           person (d/entity dbval nid) 
           p-map (select-keys person per-query-keys ) ]

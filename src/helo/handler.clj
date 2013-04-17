@@ -7,6 +7,7 @@
             [ring.util.response :as resp]
             [helo.service.auth :as auth]
             [helo.service.orgs :as org]
+            [helo.service.notes :as nte]
             [helo.service.persons :as per]
             [cheshire.core :as json]
             [clojure.pprint])
@@ -135,7 +136,7 @@
 ;Team role with R privilege
 (defroutes team-read-routes
   (route/resources "/" )
-  (GET "/orgs" request  (org/get-orgs))
+  (GET "/orgs" request  (org/get-orgs request))
   (GET "/orgs/:id" request  (org/get-org request))
   (GET "/persons" request  (per/get-persons request))
   (GET "/persons/:id" [id]  (per/get-person id))
@@ -150,7 +151,7 @@
   (POST "/persons/:uuid" request  (per/update-person request))
   (POST "/persons" request (per/post-persons request))
 ;  (POST "/notes/:uuid" request  (nte/update-note request))
-;  (POST "/notes" request (nte/post-notes request)) 
+  (POST "/notes" request (nte/post-notes request)) 
 )
 
 
