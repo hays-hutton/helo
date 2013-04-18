@@ -229,7 +229,6 @@
      (-> p-map
        (assoc :cchannels (person-cchannels person))
        (assoc :referrals (person-referrals person))
-       (assoc :notes (person-notes person))
        (assoc :jobs (person-jobs person)))
       )))
 

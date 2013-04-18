@@ -75,6 +75,32 @@ function PeopleCtrl($scope, $http) {
 
 }
 
+function SearchCtrl($scope, $routeParams, $http) {
+  console.log("hello controller");
+
+  $scope.searchModel = '';
+  $scope.sel = {
+    placeholder: "Parent Org",
+    minimumInputLength: 3,
+    quietMillis: 700,
+    ajax: {
+      url: "/orgs",
+      datatype: 'json',
+      data: function(term, page) {
+        return {
+          q: term,
+          page_limit: 20,
+          format: 'search'};
+      },
+      results: function(data, page) {
+        console.log(data);
+        return data; 
+      }
+          
+    }
+  }
+}
+
 function PersonCtrl($scope, $routeParams, $http) {
   $scope.data = [0, 5, 3,2,4,5,2,3,1,0,0,2,1,3,2,1,2,3,5,0,0,1,3];
 
@@ -150,7 +176,43 @@ function CommCtrl($scope) { }
 function CommsCtrl($scope) { }
 function InsurorsCtrl($scope) { }
 function InsurorCtrl($scope) { }
-function NotesCtrl($scope) { }
+function NotesCtrl($scope, $http) {
+  $scope.note = '';
+  
+  $scope.addNote = function() {
+    $http.post('/notes', {"note": $scope.note,
+                          "parent": $scope.id}).success(
+                      function(data) {
+                        $scope.message = data.message;
+                        $scope.messageType = 'success';
+                        //$scope.resetAddPerson();
+                        //$scope.setSelected('all');
+                      }).error(
+                        function(data) {
+                          $scope.message = data.message;
+                          $scope.messageType = 'alert';
+                        });
+  }
+
+  $scope.notes = [];
+  $scope.offset = 0;
+  $scope.limit = 10;
+
+  $scope.getNotes = function() {
+    $http.get('/notes', {params: {'parent': $scope.id,
+                                  'offset': $scope.offset,
+                                   'limit': $scope.limit}}).success(
+                           function(data) {
+                             $scope.notes.concat(data.notes);
+                             }).error(
+                               function(data) {
+                               $scope.message = data.message;
+                               $scope.messageType = 'alert';
+                               });
+  }
+  $scope.getNotes();
+}
+
 function NoteCtrl($scope) { }
 function AgenciesCtrl($scope) { }
 function AgencyCtrl($scope) { }

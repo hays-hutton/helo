@@ -140,7 +140,7 @@
   (GET "/orgs/:id" request  (org/get-org request))
   (GET "/persons" request  (per/get-persons request))
   (GET "/persons/:id" [id]  (per/get-person id))
-;  (GET "/notes" request  (nte/get-notes))
+  (GET "/notes" request  (nte/get-notes request))
 ;  (GET "/notes/:id" request  (nte/get-note request))
 )
 

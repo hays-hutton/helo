@@ -6,8 +6,8 @@
 (defn get-note [request]
   (println "service/get-note: " request))
 
-(defn get-notes [request]
-  (println "service/get-notess" request)
+(defn get-notes [{params :params}]
+  (notes/read-notes params)
 )
 
 (defn post-notes [{params :params}]

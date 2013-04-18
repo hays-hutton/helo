@@ -26,56 +26,54 @@
 
 <div ng-show="getShow('view')">
   <div class="row">
-    <div class="columns small-4">
-      <h4>Address</h4>
-      <hr/>
-      <div>{{person['person/first-name']}} {{person['person/last-name']}}</div>
-      <div>{{person['address/street']}}</div>
-      <div>{{person['address/city']}}, {{person['address/region']}} {{person['address/postal-code']}}</div>
+    <div class="columns small-3">
       <div id="map-canvas" ui-map="myMap" ui-options="mapOptions" class="map">hello</div>
     </div>
+    <div class="columns small-3">
+      <h6>Address</h6>
+      <div>{{person['person/first-name']}} {{person['person/last-name']}}</div>
+      <div>{{person['address/street']}}</div>
+      <div>{{person['address/city']}}, {{person['address/region']}} {{person['address/postalCode']}}</div>
+    </div>
+ 
+    <div class="columns small-3">
+      <h6>Activity</h6>
+      <div>{{person.updated | date:'short'}} last update </div>
+      <div>{{person.created | date:'short'}} created at</div>
+      <h5 ui-jq="sparkline" ui-options="data,{type: 'bar'}"></h5>
+      <h5 ui-jq="sparkline" ui-options="data,{type: 'line'}"></h5>
+    </div>
 
-    <div class="columns small-8">
-      <div class="row">
-        <div class="columns small-6">
-          <h4>CChannels</h4>
-          <hr/>
-          <div ng-repeat="cchan in person.cchannels">
-            <a ng-href="#/cchannels/{{cchan.id}}">{{cchan.name}}</a>
-          </div>
-        </div>
-        <div class="columns small-6">
-          <h4>Activity</h4>
-          <hr/>
-          <div>{{person.updated | date:'short'}} last update </div>
-          <div>{{person.created | date:'short'}} created at</div>
-          <h5 ui-jq="sparkline" ui-options="data,{type: 'bar'}"></h5>
-          <h5 ui-jq="sparkline" ui-options="data,{type: 'line'}"></h5>
-        </div>
+    <div class="columns small-3">
+      <h6>CChannels</h6>
+      <div ng-repeat="cchan in person.cchannels">
+        <a ng-href="#/cchannels/{{cchan.id}}">{{cchan.name}}</a>
       </div>
-      <div class="row">
-        <div class="columns small-4">
-          <h4>Notes</h4>
-          <div ng-repeat="note in person.notes">
-            <div>{{note.name}}</div>
-            <div>By: <a ng-href="#/persons/{{note['by-id']}}">{{note['by-name']}}</a></div>
-            <div>At: {{note.created | date:small}}</div>
-          </div>
-        </div>
-        <div class="columns small-4">
-          <h4>Referrals</h4>
-          <hr/>
-          <div ng-repeat="refer in person.referrals">
-            hello
-          </div>
-        </div>
-        <div class="columns small-4">
-          <h4>Jobs</h4>
-          <hr/>
-          <div ng-repeat="job in person.jobs">
-            hello
-          </div>
-        </div>
+    </div>
+ </div>
+  <div class="row"> 
+    <div class="columns small-6" ng-controller="NotesCtrl">
+      <h6>Notes</h6>
+      <form>
+        <textarea ng-model="note"></textarea>
+        <button class="small" ng-click="addNote()">Add Note</button>
+      </form>
+      <div ng-repeat="note in person.notes">
+        <div>{{note.name}}</div>
+        <div>By: <a ng-href="#/persons/{{note['by-id']}}">{{note['by-name']}}</a></div>
+        <div>At: {{note.created | date:small}}</div>
+      </div>
+    </div>
+    <div class="columns small-3">
+      <h6>Referrals</h6>
+      <div ng-repeat="refer in person.referrals">
+          hello
+      </div>
+    </div>
+    <div class="columns small-3">
+      <h6>Jobs</h6>
+      <div ng-repeat="job in person.jobs">
+        hello
       </div>
     </div>
   </div>

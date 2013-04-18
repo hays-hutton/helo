@@ -33,10 +33,27 @@
         (handler tran)
         {:status 400 :body (json/encode {:message  (str "Missing required params:" missing)})}))))
 
+(defn translate-keys [handler translate-map]
+  (fn [tran]
+    (let [m (first tran)
+          m* (zipmap (map #(translate-map %) (keys m)) (vals m))]
+      (handler [m*]))))
+
 (defn add-key [handler]
   (fn [tran]
     (let [tran* (assoc (first tran) :db/id (d/tempid :db.part/user))]
       (handler [tran*]))))
+
+(defn query []
+  (fn [query]
+    (try 
+      (let [dbval (db conn)
+            dbs (:dbs query)
+            args (concat '(query dbval) dbs )
+            return (ffirst (apply q args))]
+        (println "The query returns: " return)
+        return)
+      (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))
 
 (defn post []
   (fn [tran]
