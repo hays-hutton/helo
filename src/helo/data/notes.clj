@@ -61,19 +61,32 @@
 
 (defn build-query [handler]
   (fn [params]
+    (println "build params" params)
     (if-let [parent (Long/parseLong (:parent params))]
-      (handler {:query  '{:find [?e] :in [$ ?parent] :where [[?e :type :type/note]
-                                                   [?e :note/parent ?parent ]]}
-                :dbs [parent] }))
-    []))
+      (handler {:query  '{:find [?e, ?updated]
+                          :in [$ ?parent]
+                          :where [[?e :type :type/note]
+                                  [?e :note/parent ?parent]
+                                  [?e :updated ?updated]]}
+                :dbs [parent] }) 
+      []
+    )
+    ))
 
 (defn limit-query [handler]
   (fn [params]
-    (if-let [offset (:offset params)]
-      (let [limit (:limit params)
+    (if-let [limit (Integer/parseInt (:limit params)) ]
+      (let [offset (Integer/parseInt (:offset params)) 
             response (handler (dissoc params :limit :offset))]
-        (take limit (drop offset response))
-))))
+        (take limit (drop offset response)))
+     {:status 400
+      :body (json/encode {:message "Bad limit or offset issue" :message-type "alert"})}) ))
+
+(defn strip-outer-vec [handler]
+  (fn [v]
+    (let [m (first v)]
+      (handler m))))
+
 (defn gen-response [handler]
   (fn [params]
     (let [response (handler params)]
@@ -86,6 +99,7 @@
       (build-query)
       (limit-query)
       (gen-response)
+      (strip-outer-vec)
       (core/remove-empty-keys)))
 
 (def create-note

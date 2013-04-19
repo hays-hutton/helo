@@ -47,10 +47,14 @@
 (defn query []
   (fn [query]
     (try 
+      (println "The query:" query)
       (let [dbval (db conn)
             dbs (:dbs query)
-            args (concat '(query dbval) dbs )
-            return (ffirst (apply q args))]
+            m (:query query)
+            args (concat  [m dbval] dbs )
+            v (println "args" args)
+            return (apply q args)]
+        (println "Args is " args)
         (println "The query returns: " return)
         return)
       (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))
