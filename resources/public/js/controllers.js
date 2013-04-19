@@ -104,15 +104,15 @@ function SearchCtrl($scope, $routeParams, $http) {
 function PersonCtrl($scope, $routeParams, $http) {
   $scope.data = [0, 5, 3,2,4,5,2,3,1,0,0,2,1,3,2,1,2,3,5,0,0,1,3];
 
-  $scope.latitude = 34.555;
-  $scope.longitude = -35.333;
-
   $scope.id = $routeParams.id;
   $scope.url = '/persons/' + $scope.id;
   $http.get($scope.url).success(function(data) {
         $scope.person = data;
         $scope.latitude = $scope.person['address/latitude'];
         $scope.longitude = $scope.person['address/longitude'];
+        $scope.latLon =  new google.maps.LatLng($scope.latitude, $scope.longitude)
+        $scope.marker = new google.maps.Marker({map: $scope.myMap, position: $scope.latLon});
+        $scope.myMap.panTo($scope.latLon);
       }).error(function(data) {
         $scope.message = data.message;
       });
@@ -131,7 +131,6 @@ function PersonCtrl($scope, $routeParams, $http) {
   
   $scope.setSelected = function(name) {
     $scope.selected = name;
-    console.log($scope.latitude);
     $scope.mapOptions = {
       center: new google.maps.LatLng($scope.latitude, 0.000),
       zoom: 13,
@@ -164,9 +163,10 @@ function PersonCtrl($scope, $routeParams, $http) {
   }
 
   $scope.setSelected('view');
+
   $scope.mapOptions = {
-    center: new google.maps.LatLng(35.125349,-89.9662929),
-    zoom: 13,
+    center: new google.maps.LatLng(36.125349,-89.9662929),
+    zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
 
