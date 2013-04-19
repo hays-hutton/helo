@@ -185,7 +185,8 @@ function NotesCtrl($scope, $http) {
                       function(data) {
                         $scope.message = data.message;
                         $scope.messageType = 'success';
-                        //$scope.resetAddPerson();
+                        $scope.getNotes();
+                        $scope.note = '';
                         //$scope.setSelected('all');
                       }).error(
                         function(data) {
@@ -203,7 +204,9 @@ function NotesCtrl($scope, $http) {
                                   'offset': $scope.offset,
                                    'limit': $scope.limit}}).success(
                            function(data) {
-                             $scope.notes.concat(data.notes);
+                             $scope.notes = data.results;
+                             $scope.offset = data.offset;
+                             $scope.limit = data.limit;
                              }).error(
                                function(data) {
                                $scope.message = data.message;

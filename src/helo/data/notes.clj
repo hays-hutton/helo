@@ -29,6 +29,16 @@
    :parent 
    :who])
 
+(defn ent-to-note-map [entity]
+  {:note (:note/note entity)
+   :byId (:db/id (:note/by entity)) 
+   :byName (:name (:note/by entity))
+   :updated (:updated entity)
+   :name (:name entity)
+   :id (:db/id entity)
+   :type (:type entity)
+})
+
 ;TODO is this even used?
 (defn note-map [parent-id note who]
   (let [tstamp (java.util.Date.)
@@ -78,7 +88,7 @@
     (if-let [limit (Integer/parseInt (:limit params)) ]
       (let [offset (Integer/parseInt (:offset params)) 
             response (handler (dissoc params :limit :offset))]
-        (take limit (drop offset response)))
+        (assoc response :results (take limit (drop offset (core/sort-by-second (:results response))))))
      {:status 400
       :body (json/encode {:message "Bad limit or offset issue" :message-type "alert"})}) ))
 
@@ -89,10 +99,16 @@
 
 (defn gen-response [handler]
   (fn [params]
-    (let [response (handler params)]
+    (let [response (handler params)
+          ents (map #(d/entity (:dbval response) (first %)) (:results response))
+          notes (into [] (map #(ent-to-note-map %) ents))
+]
       {:status 200
        :headers {"Content-Type" "application/json"}
-       :body (json/encode response)})))
+       :body (json/encode {:limit 10
+                           :offset 0
+                           :type :note
+                            :results notes})})))
 
 (def read-notes
   (-> (core/query)

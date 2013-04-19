@@ -53,10 +53,12 @@
             m (:query query)
             args (concat  [m dbval] dbs )
             v (println "args" args)
-            return (apply q args)]
+            results (apply q args)]
         (println "Args is " args)
-        (println "The query returns: " return)
-        return)
+        (println "The query returns: " results)
+        {:query args
+         :dbval dbval
+         :results results})
       (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))
 
 (defn post []

@@ -11,6 +11,7 @@
                  [compojure "1.1.5"]
                  [com.datomic/datomic-free "0.8.3826" :exclusions [org.slf4j/slf4j-nop
                                                                    org.slf4j/log4j-over-slf4j ]]
+
                  [ring "1.1.8"]
                  [cheshire "5.1.0"]
                  [geocoder-clj "0.1.1"]

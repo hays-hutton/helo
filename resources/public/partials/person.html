@@ -58,10 +58,9 @@
         <textarea ng-model="note"></textarea>
         <button class="small" ng-click="addNote()">Add Note</button>
       </form>
-      <div ng-repeat="note in person.notes">
-        <div>{{note.name}}</div>
-        <div>By: <a ng-href="#/persons/{{note['by-id']}}">{{note['by-name']}}</a></div>
-        <div>At: {{note.created | date:small}}</div>
+      <div ng-repeat="note in notes" >
+        <div>{{note.updated | date: 'medium'}} by <a ng-href="#/persons/{{note.byId}}">{{note.byName}}</a> </div>
+        <div class="panel">{{note.note}}</div>
       </div>
     </div>
     <div class="columns small-3">
