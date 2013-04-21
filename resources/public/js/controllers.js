@@ -178,16 +178,20 @@ function InsurorsCtrl($scope) { }
 function InsurorCtrl($scope) { }
 function NotesCtrl($scope, $http) {
   $scope.note = '';
-  
+  $scope.notes = [];
+  $scope.offset = 0;
+  $scope.limit = 10;
+  $scope.count = 0;
+
   $scope.addNote = function() {
     $http.post('/notes', {"note": $scope.note,
                           "parent": $scope.id}).success(
                       function(data) {
                         $scope.message = data.message;
                         $scope.messageType = 'success';
+                        $scope.reset();
                         $scope.getNotes();
                         $scope.note = '';
-                        //$scope.setSelected('all');
                       }).error(
                         function(data) {
                           $scope.message = data.message;
@@ -195,9 +199,12 @@ function NotesCtrl($scope, $http) {
                         });
   }
 
-  $scope.notes = [];
-  $scope.offset = 0;
-  $scope.limit = 10;
+  $scope.reset = function() {
+    $scope.notes = [];
+    $scope.offset = 0;
+    $scope.limit = 10;
+    $scope.count = 0;
+  }
 
   $scope.getNotes = function() {
     $http.get('/notes', {params: {'parent': $scope.id,
@@ -207,12 +214,39 @@ function NotesCtrl($scope, $http) {
                              $scope.notes = data.results;
                              $scope.offset = data.offset;
                              $scope.limit = data.limit;
+                             $scope.count = data.count;
                              }).error(
                                function(data) {
                                $scope.message = data.message;
                                $scope.messageType = 'alert';
                                });
   }
+
+  $scope.more = function() {
+    if($scope.count > $scope.offset) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  $scope.appendMore = function() {
+    var rOffset = $scope.offset + $scope.limit;
+    if($scope.count > $scope.offset) {
+      $http.get('/notes', {params: {'parent': $scope.id,
+                                    'offset': rOffset, 
+                                    'limit': $scope.limit}}).success(
+                                      function(data) {
+                                        $scope.notes = $scope.notes.concat(data.results);
+                                        $scope.offset = data.offset;
+                                        }).error(
+                                          function(data) {
+                                            $scope.message = data.message;
+                                            $scope.messageType = 'alert';
+                                            });
+    }
+  }
+
   $scope.getNotes();
 }
 

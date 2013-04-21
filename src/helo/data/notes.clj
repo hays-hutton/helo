@@ -87,8 +87,13 @@
   (fn [params]
     (if-let [limit (Integer/parseInt (:limit params)) ]
       (let [offset (Integer/parseInt (:offset params)) 
-            response (handler (dissoc params :limit :offset))]
-        (assoc response :results (take limit (drop offset (core/sort-by-second (:results response))))))
+            response (handler params)
+            ;response (handler (dissoc params :limit :offset))
+            results (:results response)
+            cnt (count results)
+
+]
+        (assoc response :results (take limit (drop offset (core/sort-by-second results))) :count cnt :limit limit :offset offset))
      {:status 400
       :body (json/encode {:message "Bad limit or offset issue" :message-type "alert"})}) ))
 
@@ -101,14 +106,14 @@
   (fn [params]
     (let [response (handler params)
           ents (map #(d/entity (:dbval response) (first %)) (:results response))
-          notes (into [] (map #(ent-to-note-map %) ents))
-]
+          notes (into [] (map #(ent-to-note-map %) ents)) ]
       {:status 200
        :headers {"Content-Type" "application/json"}
-       :body (json/encode {:limit 10
-                           :offset 0
+       :body (json/encode {:limit (:limit response)
+                           :offset (:offset response)
+                           :count (:count response)
                            :type :note
-                            :results notes})})))
+                           :results notes})})))
 
 (def read-notes
   (-> (core/query)
