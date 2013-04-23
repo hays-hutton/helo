@@ -24,10 +24,7 @@
 (defn- keyify-params [target]
   (into {}
     (for [[k v] target]
-         [(if (string? k) 
-             (keyword k) 
-             k)
-          v])))
+         [(if (string? k) (keyword k) k) v])))
                                                   
 (defn keyword-params-request
   "Converts string keys in :params map to keywords."
@@ -54,7 +51,7 @@
     (let [incoming (format-request (str spy-name ":\n Incoming Request:" ) request)]
       (println incoming)
       (let [response (handler request)]
-        (let [outgoing (format-request (str spy-name ":\n Outgoing Resonse:" ) response)]
+        (let [outgoing (format-request (str spy-name ":\n Outgoing Response:" ) response)]
           (println outgoing)
           response)))))
 
@@ -76,7 +73,7 @@
 
 (defn wrap-log [handler]
   (fn [req]
-    (info (req :uri) (req :server-name) (get-in req  [:headers :referer ] ) (get-in req  [:headers :host]) (req :remote-addr)) 
+    (info (req :uri) (get-in req  [:headers "x-forwarded-for"]) (get-in req  [:headers "x-requested-with"] ) (get-in req  [:headers "accept"])) 
     (handler req)))
 
 (defn request-pin [cell]
@@ -146,11 +143,11 @@
 
 ;Team role with CUD privileges
 (defroutes team-write-routes
-  (POST "/orgs/:uuid" request  (org/update-org request))
+  (POST "/orgs/:id" request  (org/update-org request))
   (POST "/orgs" request (org/post-orgs request))
-  (POST "/persons/:uuid" request  (per/update-person request))
+  (POST "/persons/:id" request  (per/update-person request))
   (POST "/persons" request (per/post-persons request))
-;  (POST "/notes/:uuid" request  (nte/update-note request))
+;  (POST "/notes/:id" request  (nte/update-note request))
   (POST "/notes" request (nte/post-notes request)) 
 )
 
