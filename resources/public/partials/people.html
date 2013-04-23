@@ -59,6 +59,9 @@
           <input type="email" ng-model="email" placeholder="Email"/>
         </div>
         <div class="small-6 columns">
+          <label>Persons Type <small>(Relation to TEAM1)</small></label>
+          <select ng-model="personType" ng-options="val.value as val.label for val in [{'label': 'Team Member', 'value':'1'},{'label': 'Partner', 'value':'2'},{'label':'Vendor', 'value':'3'},{'label':'Client', 'value':'4'}]">
+          </select>
 
         </div>
       </div>
@@ -105,5 +108,6 @@
     </div>
     <div class="small-12 columns">
       {{address}}
+      {{personType}}
     </div>
 </div>

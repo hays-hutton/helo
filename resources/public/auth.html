@@ -1,89 +1,51 @@
 <!doctype html>
-<!--[if lt IE 7]>      <html ng-app="liverwurst" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html ng-app="liverwurst" class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html ng-app="liverwurst" class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html ng-app="liverwurst" class="no-js"> <!--<![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
-  <title>Liverwurst</title>
-  <!-- Modernizr -->
-  <script src="js/libs/modernizr-2.6.2.min.js"></script>
-  <!-- jQuery -->
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script type="text/javascript">window.jQuery || document.write('<script src="./js/libs/jquery-1.9.1.min.js"><\/script>')</script>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
-
-  <!-- Groundwork CSS -->
-  <link type="text/css" rel="stylesheet" href="./css/groundwork.css">
-  <!-- Liverwurst CSS -->
-  <link type="text/css" rel="stylesheet" href="./css/lw.css">
-  <!--[if IE 7]>
-  <link type="text/css" rel="stylesheet" href="./css/font-awesome-ie7.min.css">
-  <![endif]-->
-  <script type="text/javascript">
-    // (function(){
-    //   var datauri = new Image();
-    //   datauri.onerror = function() {
-    //       Modernizr.addTest('datauri', function () { return false; });
-    //   };  
-    //   datauri.onload = function() {
-    //       Modernizr.addTest('datauri', function () { return (datauri.width == 1 && datauri.height == 1); });
-    //       Modernizr.load({
-    //         test: Modernizr.datauri,
-    //         nope: './css/no-datauri.css'
-    //       });
-    //   };
-    //   datauri.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-    // })();
-    Modernizr.load({
-      test: Modernizr.svg,
-      nope: './css/groundy/no-svg.css'
-    });
-  </script>
+  <title>TEAM1 -- Authorization</title>
+  <link type="text/css" rel="stylesheet" href="./css/foundation.css">
+  <link type="text/css" rel="stylesheet" href="./css/helo.css">
 </head>
 <body>
-  <div class="container">
     <div class="row">
-      <div class="three fourths padded">
+      <div class="large-8 columns">
         <div class="border-bottom">
           <h1 class="responsive 0" data-compression="5.65" data-min="20" data-max="20"><a href="#"><img src="images/t1-logo.jpg"/></a></h1>
           <form action="/request-pin" method="POST">
             <fieldset>
               <legend>Step 1 - Request PIN</legend>
               <input name="cell" type="tel" pattern='^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$' title='Phone Number (Format: [+1]3145551212 or (314)555-1212 )' placeholder="Enter your cell phone number">
-                <button type="submit" class="success button gap-top">Request</button>
+                <button type="submit" class="success button">Request</button>
             </fieldset>
           </form>
           <form class="gap-top" action="/pin" method="POST">
             <fieldset>
               <legend>Step 2 - Enter PIN</legend>
               <input name="pin" type="tel" placeholder="Enter the PIN you received via text">
-              <button type="submit" class="success button gap-top">Enter</button>
+              <button type="submit" class="success button">Enter</button>
             </fieldset>
           </form>
         </div>
       </div>
-      <div class="one fourth padded">
+      <div class="large-4 columns">
         <h1>Get Authorized!</h1>
-        <div class="padded">
-          <h4 class="gap-top">Instructions</h4>
-          <ol>
-            <li>Enter the cell phone number associated with your account</li>
-            <li>Wait for system to send you a text with a security pin.</li>
-            <li>Type it in.</li>
-            <li>Submit it.</li>
-            <li>System remembers you.</li>
-          </ol>
+        <div class="panel">
+          <h4>Instructions</h4>
+          <p>
+            <ul class="disc">
+              <li>Enter the cell phone number associated with your account</li>
+              <li>Wait for system to send you a text with a security pin.</li>
+              <li>Type it in.</li>
+              <li>Submit it.</li>
+              <li>System remembers you.</li>
+            </ul>
+          </p>
         </div>
       </div>
     </div>
-    <footer class="footer padded">
+    <footer class="footer">
       <p>&copy; 2013 TEAM1 Auto Body &amp; Glass.  <a href="mailto:help@team1.com">Need Help</a></p>
     </footer>
   </div>
-  <!-- scripts -->
-  <script type="text/javascript" src="./js/groundwork.js"></script>
 </body>
 </html>
