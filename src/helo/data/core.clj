@@ -50,15 +50,12 @@
 
 (defn limit-query [handler]
   (fn [params]
-    (println "limitq:" params)
-    (if-let [limit (Integer/parseInt (:limit params)) ]
-      (let [offset (Integer/parseInt (:offset params)) 
-            response (handler params)
-            results (:results response)
-            cnt (count results)]
-        (assoc response :results (take limit (drop offset (sort-by-second results))) :count cnt :limit limit :offset offset))
-     {:status 400
-      :body (json/encode {:message "Bad limit or offset issue" :message-type "alert"})}) ))
+    (let [limit (Integer/parseInt (get params :limit "10")) 
+          offset (Integer/parseInt (get params :offset "0")) 
+          response (handler params)
+          results (:results response)
+          cnt (count results)]
+      (assoc response :results (take limit (drop offset (sort-by-second results))) :count cnt :limit limit :offset offset))))
 
 (defn query []
   (fn [query]

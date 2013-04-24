@@ -133,13 +133,43 @@
           tail (rest tran)]
       (handler (vec (flatten (conj [(merge org* {:created-by who :updated-by who :created tstamp :updated tstamp :type :type/org})] tail)))))))
 
+
+
+(def filter-clauses
+  {"insuror" '[[?e :org/type :org.type/insuror]] 
+   "agency" '[[?e :org/type :org.type/agency]] 
+   "vendor" '[[?e :org/type :org.type/vendor]] 
+   "partner" '[[?e :org/type :org.type/partner]] 
+   "client" '[[?e :org/type :org.type/client]]})
+
+(defn search-clause [search]
+  (if search
+    '[[(fulltext $ :name ?search) [[?e ?name]]]]  ))
+(defn in-clause [search]
+  (if search
+    '[?search]))
+
+(defn search-term [search]
+  (if search
+    [search]))
+
 (defn build-query [handler]
   (fn [params]
-    (handler {:query '{:find [?e, ?updated]
-                       :in [$]
-                       :where [[?e :type :type/org]
-                               [?e :updated ?updated]]}
-              :dbs []})))
+    (let [q-map {:query '{:find [?e, ?updated]
+                            :in [$]
+                         :where [[?e :type :type/org]
+                                 [?e :updated ?updated]]}
+                 :dbs []}
+          filt (:filter params)
+          search (:search params)]
+       (println "gonna" filt ":" search)
+       (if (or filt search) 
+         (handler (-> q-map 
+                      (update-in [:query :where] concat (filter-clauses filt))
+                      (update-in [:query :where] concat (search-clause search))
+                      (update-in [:query :in] concat (in-clause search))
+                      (update-in [:dbs] concat (search-term search)))) 
+         (handler q-map)))))
 
 (defn gen-response [handler]
   (fn [params]

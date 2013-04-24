@@ -10,9 +10,6 @@
             [clj-time.coerce :only [to-date] ]
             [clojure.tools.logging :only [info error]]))
 
-
-
-;TODO does :who belong here?
 (def person-record-keys
   [:person/first-name
    :person/last-name
@@ -164,11 +161,93 @@
        :body (json/encode response)
       })))
 
-(def read-persons
+(def read-persons2
   (-> (persons-query)
       (sort-by-second)
       (build-structure)
       (ncode)
+      (core/remove-empty-keys)))
+
+(defn ent-to-per-map [entity]
+  {:id (:db/id entity)
+   :name (:name entity)
+   :parent (:db/id (:parent entity))
+   :parentName (:name (:parent entity))
+   :street (:address/street entity)
+   :city (:address/city entity)
+   :state (:address/region entity)
+   :zip (:address/postal-code entity)
+   :lat (:address/latitude entity)
+   :lon (:address/longitude entity)
+   :personType (:person/type entity)
+   :updated (:updated entity)
+   :created (:created entity)
+   :type (:type entity)
+  })
+
+(defn gen-response [handler]
+  (fn [params]
+    (let [response (handler params)
+          ents (map #(d/entity (:dbval response) (first %)) (:results response))
+          pers (into [] (map #(ent-to-per-map %) ents))]
+      {:status 200
+       :headers {"Content-Type" "application/json"}
+       :body (json/encode {:limit (:limit response)
+                           :offset (:offset response)
+                           :count (:count response)
+                           :type :persons
+                           :results pers})})))
+(def filter-clauses
+  {"team" '[[?e :person/type :person.type/team-member]] 
+   "csr" '[[?e :person/type :person.type/csr]] 
+   "agent" '[[?e :person/type :person.type/agent]] 
+   "producer" '[[?e :person/type :person.type/producer]] 
+   "adjuster" '[[?e :person/type :person.type/adjuster]] 
+   "claims" '[[?e :person/type :person.type/claims]] 
+   "client" '[[?e :person/type :person.type/client]] 
+   "vendor" '[[?e :person/type :person.type/vendor]]})
+
+(defn search-clause [search]
+  (if search
+    '[[(fulltext $ :name ?search) [[?e ?name]]]]  ))
+
+(defn in-clause [search]
+  (if search
+    '[?search]))
+
+(defn search-term [search]
+  (if search
+    [search]))
+
+(defn build-query [handler]
+  (fn [params]
+    (let [q-map {:query '{:find [?e, ?updated]
+                            :in [$]
+                         :where [[?e :type :type/person]
+                                 [?e :updated ?updated]]}
+                 :dbs []}
+          filt (:filter params)
+          search (:search params)]
+       (println "gonna" filt ":" search)
+       (if (or filt search) 
+         (handler (-> q-map 
+                      (update-in [:query :where] concat (filter-clauses filt))
+                      (update-in [:query :where] concat (search-clause search))
+                      (update-in [:query :in] concat (in-clause search))
+                      (update-in [:dbs] concat (search-term search)))) 
+         (handler q-map)))))
+
+(defn strip-outer-vec [handler]
+  (fn [v]
+    (let [m (first v)]
+      (handler m))))
+
+(def read-persons
+  (-> (core/query)
+      (build-query)
+      (core/limit-query)
+      (gen-response)
+      (strip-outer-vec)
       (core/remove-empty-keys)))
 
 (def per-query-keys [:db/id 

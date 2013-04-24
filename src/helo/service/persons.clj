@@ -9,9 +9,9 @@
   (pers/read-person id)
 )
 
-(defn get-persons [request]
+(defn get-persons [{params :params}]
   (println "service/get-persons")
-  (pers/read-persons request )
+  (pers/read-persons params )
 
 )
 

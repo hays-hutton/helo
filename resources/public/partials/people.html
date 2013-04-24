@@ -6,7 +6,7 @@
 </div>
 
 <div class="row">
-  <div class="small-12 columns">
+  <div class="large-12 columns">
     <div class="right">
       <button class="tiny button" ng-class="getShow('all')" ng-click="setSelected('all');">Show All</button>
       <button class="tiny button" ng-class="getShow('addPerson')" ng-click="setSelected('addPerson');">Add Person</button>
@@ -16,10 +16,10 @@
 
 <div ng-show="getShow('all')">
   <div class="row" ng-repeat="person in list">
-    <div ng-class-even="'even'" class="small-8 columns">
+    <div ng-class-even="'even'" class="large-8 columns">
       <a ng-href="#/persons/{{person.id}}">{{person.name}}</a>
     </div>
-    <div ng-class-even="'even'" class="small-4 columns">
+    <div ng-class-even="'even'" class="large-4 columns">
       <span class="right">
         {{person.updated | date:'MM-dd-yy hh:mm a'}}
       </span>
@@ -32,81 +32,79 @@
       <legend>Person</legend>
 
       <div class="row">
-        <div class="small-2 columns">
+        <div class="large-2 columns">
           <label>Salutation</label>
           <input type="text" ng-model="salutation" placeholder="salutation"/>
         </div>
-        <div class="small-5 columns">
+        <div class="large-5 columns">
           <label>First Name</label>
           <input type="text" ng-model="firstName" placeholder="first"/>
         </div>
-        <div class="small-5 columns">
+        <div class="large-5 columns">
           <label>Last Name</label>
           <input type="text" ng-model="lastName" placeholder="last"/>
         </div>
       </div>
 
       <div class="row">
-        <div class="small-12 columns">
+        <div class="large-12 columns">
           <label>Address</label>
           <input type="text" ng-model="address" placeholder="address"/>
         </div>
       </div>
 
       <div class="row">
-        <div class="small-6 columns">
-          <label>Email</label>
-          <input type="email" ng-model="email" placeholder="Email"/>
+        <div class="large-6 columns">
+          <label>Parent Org <small>(e.g works at, belongs to)</small></label>
+          <input type="text" style="width: 100%" ui-select2="parentOrgOpts" ng-model="parentOrg"/>
         </div>
-        <div class="small-6 columns">
-          <label>Persons Type <small>(Relation to TEAM1)</small></label>
+        <div class="large-6 columns">
+          <label>Person Type <small>(Relation to TEAM1)</small></label>
           <select ng-model="personType" ng-options="val.value as val.label for val in [{'label': 'Team Member', 'value':'1'},{'label': 'Partner', 'value':'2'},{'label':'Vendor', 'value':'3'},{'label':'Client', 'value':'4'}]">
           </select>
-
         </div>
       </div>
 
-
       <div class="row">
-        <div class="small-6 columns">
+        <div class="large-6 columns">
           <label>Cell</label>
           <input type="tel" ng-model="cell" placeholder="Cell Phone"/>
         </div>
-        <div class="small-6 columns">
+        <div class="large-6 columns">
+          <label>Email</label>
+          <input type="email" ng-model="email" placeholder="Email"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
           <label>Work</label>
           <input type="tel" ng-model="work" placeholder="Work Phone"/>
         </div>
-      </div>
-
-      <div class="row">
-        <div class="small-6 columns">
+        <div class="large-6 columns">
           <label>Home</label>
           <input type="tel" ng-model="home" placeholder="Home Phone"/>
         </div>
-        <div class="small-6 columns">
-          <label>Fax</label>
-          <input type="tel" ng-model="fax" placeholder="Fax"/>
-        </div>
       </div>
 
       <div class="row">
-        <div class="small-12 columns">
+        <div class="large-12 columns">
           <label>Note</label>
           <textarea ng-model="note"></textarea>
         </div>
       </div>
       <div class="row">
-        <div class="small-12 columns">
+        <div class="large-12 columns">
           <button class="small" ng-click="addPerson()">Add Person</button>
         </div>
       </div>
     </fieldset>
   </form>
   <div class="row">
-    <div class="small-12 columns">
+    <div class="large-12 columns">
       {{salutation}} {{firstName}} {{lastName}}
     </div>
-    <div class="small-12 columns">
+    <div class="large-12 columns">
       {{address}}
       {{personType}}
     </div>

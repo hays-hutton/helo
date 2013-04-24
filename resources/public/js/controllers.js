@@ -7,15 +7,14 @@ function OrgCtrl($scope, $routeParams, $http) {
   $scope.url = '/orgs/' + $scope.id;
   $http.get($scope.url).success(function(data) {
         $scope.org = data;
-        $scope.latitude = $scope.person['address/latitude'];
-        $scope.longitude = $scope.person['address/longitude'];
+        $scope.latitude = $scope.org.lat;
+        $scope.longitude = $scope.org.lon;
         $scope.latLon =  new google.maps.LatLng($scope.latitude, $scope.longitude)
         $scope.marker = new google.maps.Marker({map: $scope.myMap, position: $scope.latLon});
         $scope.myMap.panTo($scope.latLon);
       }).error(function(data) {
         $scope.message = data.message;
       });
-
 
   $scope.message = "";
   $scope.messageType = "";
@@ -45,22 +44,6 @@ function OrgCtrl($scope, $routeParams, $http) {
     }
   }
 
-  $scope.getShowNote = function() {
-    if($scope.showNote) {
-      return "selected";
-    } else {
-      return "";
-    }
-  }
-
-  $scope.toggleNote = function() {
-    if($scope.showNote) {
-      $scope.showNote = false;
-    } else {
-      $scope.showNote = true;
-    }
-  }
-
   $scope.setSelected('view');
 
   $scope.mapOptions = {
@@ -68,9 +51,8 @@ function OrgCtrl($scope, $routeParams, $http) {
     zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
-
-
 }
+
 function OrgsCtrl($scope, $http) {
   $scope.offset = "0";
   $scope.limit = "10";
@@ -97,6 +79,13 @@ function OrgsCtrl($scope, $http) {
       return "";
     }
   }
+  
+  $scope.orgTypes = [{'label': 'Insuror', 'value': 'insuror'},
+                     {'label': 'Agency', 'value': 'agency'},
+                     {'label': 'Vendor', 'value': 'vendor'},
+                     {'label': 'Partner', 'value': 'partner'},
+                     {'label': 'Client', 'value': 'client'}];
+
   $scope.getOrgs = function() {
     $http.get('/orgs', {params: {'offset': $scope.offset,
                                  'limit': $scope.limit}}).success(
@@ -146,7 +135,30 @@ function OrgsCtrl($scope, $http) {
     $scope.note = "";
   }
 
+  $scope.setSelected('all');
+
+  $scope.acctMgr = '';
+  $scope.acctMgrOpts = {
+    placeholder: "Acct Mgr",
+    minimumInputLength: 2,
+    quietMillis: 700,
+    ajax: {
+      url: "/people?type=team",
+      datatype: 'json',
+      data: function(term, page) {
+        return {
+          q: term,
+          page_limit: 20,
+          format: 'search'};
+      },
+      results: function(data, page) {
+        console.log(data);
+        return data; 
+      }
+    }
+  }
 }
+
 function ReferralsCtrl($scope) { }
 function ReferralCtrl($scope) { }
 
@@ -161,7 +173,16 @@ function PeopleCtrl($scope, $http) {
     $scope.message = msg;
     $scope.messageType = msgType;
   }
-  
+
+  $scope.perTypes = [{'label': 'Team Member', 'value': 'team'},
+                     {'label': 'CSR', 'value': 'csr'},
+                     {'label': 'Agent', 'value': 'agent'},
+                     {'label': 'Producer', 'value': 'producer'},
+                     {'label': 'Adjuster', 'value': 'adjuster'},
+                     {'label': 'Claims', 'value': 'claims'},
+                     {'label': 'Client', 'value': 'client'},
+                     {'label': 'Vendor', 'value': 'vendor'}];
+
   $scope.setSelected = function(name) {
     $scope.selected = name;
     $scope.getPersons();
@@ -188,7 +209,7 @@ function PeopleCtrl($scope, $http) {
   $scope.getPersons = function() {
     $http.get('/persons' ).success( function(data) {
         $scope.count = data.count;
-        $scope.list = data.list;
+        $scope.list = data.results;
         }).error(function(data) {
           $scope.setMessage(data);
           }); }
@@ -217,29 +238,62 @@ function PeopleCtrl($scope, $http) {
 
   $scope.setSelected('all');
 
+  $scope.parentOrg = '';
 
-}
-
-function SearchCtrl($scope, $routeParams, $http) {
-  console.log("hello controller");
-
-  $scope.searchModel = '';
-  $scope.sel = {
+  $scope.parentOrgOpts = {
     placeholder: "Parent Org",
-    minimumInputLength: 3,
+    minimumInputLength: 2,
     quietMillis: 700,
     ajax: {
       url: "/orgs",
       datatype: 'json',
       data: function(term, page) {
+        term = term + '*';
         return {
-          q: term,
-          page_limit: 20,
+          search: term,
+          limit: 20,
+          offset: 0,
           format: 'search'};
       },
       results: function(data, page) {
         console.log(data);
-        return data; 
+        var temp = [];
+        data.results.forEach(function(val) {
+            temp.push({id: val.id, text: val.name});
+            });
+        console.log(temp);
+        return {results: temp}; 
+      }
+          
+    }
+  }
+}
+
+function SearchCtrl($scope, $routeParams, $http) {
+  $scope.searchModel = '';
+  $scope.sel = {
+    placeholder: "Parent Org",
+    minimumInputLength: 2,
+    quietMillis: 700,
+    ajax: {
+      url: "/orgs",
+      datatype: 'json',
+      data: function(term, page) {
+        term = term + '*';
+        return {
+          search: term,
+          limit: 20,
+          offset: 0,
+          format: 'search'};
+      },
+      results: function(data, page) {
+        console.log(data);
+        var temp = [];
+        data.results.forEach(function(val) {
+            temp.push({id: val.id, text: val.name});
+            });
+        console.log(temp);
+        return {results: temp}; 
       }
           
     }
@@ -288,22 +342,6 @@ function PersonCtrl($scope, $routeParams, $http) {
       return "selected";
     } else {
       return "";
-    }
-  }
-
-  $scope.getShowNote = function() {
-    if($scope.showNote) {
-      return "selected";
-    } else {
-      return "";
-    }
-  }
-
-  $scope.toggleNote = function() {
-    if($scope.showNote) {
-      $scope.showNote = false;
-    } else {
-      $scope.showNote = true;
     }
   }
 
