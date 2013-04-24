@@ -133,11 +133,11 @@
 ;Team role with R privilege
 (defroutes team-read-routes
   (route/resources "/" )
-  (GET "/orgs" request  (org/get-orgs request))
-  (GET "/orgs/:id" request  (org/get-org request))
-  (GET "/persons" request  (per/get-persons request))
-  (GET "/persons/:id" [id]  (per/get-person id))
-  (GET "/notes" request  (nte/get-notes request))
+  (GET "/orgs" request (org/get-orgs request))
+  (GET "/orgs/:id" [id] (org/get-org id))
+  (GET "/persons" request (per/get-persons request))
+  (GET "/persons/:id" [id] (per/get-person id))
+  (GET "/notes" request (nte/get-notes request))
 ;  (GET "/notes/:id" request  (nte/get-note request))
 )
 

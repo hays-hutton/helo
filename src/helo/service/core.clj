@@ -39,8 +39,8 @@
 ))
 
 (defn assoc-geocode [m]
-  (if (:address/address m)
-    (if-let [loc (first (geo/geocode-address (:address/address m)))] 
+  (if (:address m)
+    (if-let [loc (first (geo/geocode-address (:address m)))] 
         (merge m 
           {:address/street (str (:street-number loc) " " (:street-name loc))
            :address/city (:city loc)
@@ -49,4 +49,5 @@
            :address/latitude (:latitude (:location loc))
            :address/longitude (:longitude (:location loc))
            :address/provider (:provider loc)
+           :address/address (:address m)
           }) m) m))

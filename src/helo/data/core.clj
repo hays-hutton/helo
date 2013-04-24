@@ -23,11 +23,13 @@
 
 (defn valid-keys [handler v]
   (fn [tran]
+    (println "valid-keys tran:" tran " valid:" v)
     (let [valid (select-keys (first tran) v) ]
       (handler [valid]))))
 
 (defn min-required-keys [handler v]
   (fn [tran]
+    (println "min-required-keys tran:" tran " required:" v)
     (let [missing (clojure.set/difference (set v) (set (keys (first tran))))] 
       (if (empty? missing)
         (handler tran)
@@ -35,14 +37,28 @@
 
 (defn translate-keys [handler translate-map]
   (fn [tran]
+    (println "translate-keys tran:" tran " tran-map:" translate-map)
     (let [m (first tran)
           m* (zipmap (map #(translate-map %) (keys m)) (vals m))]
+      (println "post-translate: " m*)
       (handler [m*]))))
 
 (defn add-key [handler]
   (fn [tran]
     (let [tran* (assoc (first tran) :db/id (d/tempid :db.part/user))]
       (handler [tran*]))))
+
+(defn limit-query [handler]
+  (fn [params]
+    (println "limitq:" params)
+    (if-let [limit (Integer/parseInt (:limit params)) ]
+      (let [offset (Integer/parseInt (:offset params)) 
+            response (handler params)
+            results (:results response)
+            cnt (count results)]
+        (assoc response :results (take limit (drop offset (sort-by-second results))) :count cnt :limit limit :offset offset))
+     {:status 400
+      :body (json/encode {:message "Bad limit or offset issue" :message-type "alert"})}) ))
 
 (defn query []
   (fn [query]
@@ -63,6 +79,7 @@
 
 (defn post []
   (fn [tran]
+    (println "post:" tran)
     (try 
       @(d/transact conn tran)
       (println "The record: " tran)

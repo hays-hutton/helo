@@ -16,7 +16,6 @@
 (def attr-to-ez 
   (zipmap (vals ez-to-attr) (keys ez-to-attr)))
 
-;TODO does :who really belong here?
 (def valid-keys
   [:note
    :by
@@ -39,24 +38,6 @@
    :type (:type entity)
 })
 
-;TODO is this even used?
-(defn note-map [parent-id note who]
-  (let [tstamp (java.util.Date.)
-        length (count note)]
-    {:db/id (d/tempid :db.part/user)
-     :name  (if (< length 33) note (subs note 0 33))
-     :note/note note
-     :note/visibility :visibility/team-member
-     :note/by who
-     :note/parent parent-id
-     :updated-by who
-     :created-by who
-     :updated tstamp
-     :created tstamp
-     :type :type/note
-    }))
-
-
 (defn add-defaults [handler]
   (fn [tran]
     (let [note-m (first tran)
@@ -71,7 +52,6 @@
 
 (defn build-query [handler]
   (fn [params]
-    (println "build params" params)
     (if-let [parent (Long/parseLong (:parent params))]
       (handler {:query  '{:find [?e, ?updated]
                           :in [$ ?parent]
@@ -79,23 +59,7 @@
                                   [?e :note/parent ?parent]
                                   [?e :updated ?updated]]}
                 :dbs [parent] }) 
-      []
-    )
-    ))
-
-(defn limit-query [handler]
-  (fn [params]
-    (if-let [limit (Integer/parseInt (:limit params)) ]
-      (let [offset (Integer/parseInt (:offset params)) 
-            response (handler params)
-            ;response (handler (dissoc params :limit :offset))
-            results (:results response)
-            cnt (count results)
-
-]
-        (assoc response :results (take limit (drop offset (core/sort-by-second results))) :count cnt :limit limit :offset offset))
-     {:status 400
-      :body (json/encode {:message "Bad limit or offset issue" :message-type "alert"})}) ))
+      [])))
 
 (defn strip-outer-vec [handler]
   (fn [v]
@@ -118,7 +82,7 @@
 (def read-notes
   (-> (core/query)
       (build-query)
-      (limit-query)
+      (core/limit-query)
       (gen-response)
       (strip-outer-vec)
       (core/remove-empty-keys)))
@@ -131,3 +95,20 @@
       (core/min-required-keys required-record-keys)
       (core/valid-keys valid-keys)
       (core/remove-empty-keys)))
+
+
+(defn note-map  [parent-id note who]
+  (let  [tstamp  (java.util.Date.)
+        length  (count note)]
+    {:db/id  (d/tempid :db.part/user)
+     :name  (if  (< length 33) note  (subs note 0 33))
+     :note/note note
+     :note/visibility :visibility/team-member
+     :note/by who
+     :note/parent parent-id
+     :updated-by who
+     :created-by who
+     :updated tstamp
+     :created tstamp
+     :type :type/note}
+))
