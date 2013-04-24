@@ -1,1 +1,105 @@
-<h3>Orgs</h3>
+<h2>Orgs</h2>
+<hr/>
+<div class="alert-box" ng-class="messageType" ng-show="messageType">
+  {{message}}
+  <a ng-click="resetMessage()" class="close">&times;</a>
+</div>
+
+<div class="row">
+  <div class="small-12 columns">
+    <div class="right">
+      <button class="tiny button" ng-class="getShow('all')" ng-click="setSelected('all');">Show All</button>
+      <button class="tiny button" ng-class="getShow('addOrg')" ng-click="setSelected('addOrg');">Add Org</button>
+    </div>
+  </div>
+</div>
+
+<div ng-show="getShow('all')">
+  <div class="row" ng-repeat="org in orgs">
+    <div ng-class-even="'even'" class="small-8 columns">
+      <a ng-href="#/orgs/{{org.id}}">{{org.name}}</a>
+    </div>
+    <div ng-class-even="'even'" class="small-4 columns">
+      <span class="right">
+        {{org.updated | date:'MM-dd-yy hh:mm a'}}
+      </span>
+    </div>
+  </div>
+</div>
+<div ng-show="getShow('addOrg')">
+  <form>
+    <fieldset>
+      <legend>Org</legend>
+
+      <div class="row">
+        <div class="large-4 columns">
+          <label>Name</label>
+          <input type="text" ng-model="name" placeholder="Name"/>
+        </div>
+        <div class="large-4 columns">
+        </div>
+        <div class="large-4 columns">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-12 columns">
+          <label>Address</label>
+          <input type="text" ng-model="address" placeholder="address"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+          <label>Email</label>
+          <input type="email" ng-model="email" placeholder="Email"/>
+        </div>
+        <div class="large-6 columns">
+          <label>Org Type <small>(Relation to TEAM1)</small></label>
+          <select ng-model="orgType" ng-options="val.value as val.label for val in [{'label': 'Team Member', 'value':'1'},{'label': 'Partner', 'value':'2'},{'label':'Vendor', 'value':'3'},{'label':'Client', 'value':'4'}]">
+          </select>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+          <label>Work</label>
+          <input type="tel" ng-model="work" placeholder="Work Phone"/>
+        </div>
+        <div class="large-6 columns">
+          <label>Fax</label>
+          <input type="tel" ng-model="fax" placeholder="Fax"/>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        </div>
+        <div class="large-6 columns">
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="large-12 columns">
+          <label>Note</label>
+          <textarea ng-model="note"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div class="large-12 columns">
+          <button class="small" ng-click="addOrg()">Add Org</button>
+        </div>
+      </div>
+    </fieldset>
+  </form>
+
+  <div class="row">
+    <div class="small-12 columns">
+      {{name}} {{address}}
+    </div>
+    <div class="small-12 columns">
+      {{orgType}}
+    </div>
+  </div>
+</div>

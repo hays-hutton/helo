@@ -3,7 +3,48 @@
 /* Directives */
 
 angular.module('helo.directives', [])
-  .directive('lwRadio', function($parse) {
+.directive('heloTypeahead', ['$parse', function($parse) {
+  'use strict';
+
+  return {
+    restrict: 'A',
+    require: '?ngModel',
+    link: function postLink(scope, element, attrs, controller) {
+
+      var getter = $parse(attrs.heloTypeahead),
+          setter = getter.assign,
+          value = getter(scope);
+
+      console.log("Value:", value);
+
+      // Watch bsTypeahead for changes
+      scope.$watch(attrs.heloTypeahead, function(newValue, oldValue) {
+        if(newValue !== oldValue) {
+          console.log(newValue);
+          value = newValue;
+        }
+      });
+
+      var typeahead = element.typeahead(value);
+      //var typeahead = element.typeahead({name: "hello", local: ["hays", "harlan","laura"]});
+
+      element.bind('typeahead:autocompleted',function(ev, args) {
+          console.log("Event:", ev);
+          console.log("Args:",args);
+          });
+      
+      element.bind('typeahead:selected',function(ev, args) {
+          console.log("Event:", ev);
+          console.log("Args:",args);
+          });
+
+
+
+
+    }
+  };
+
+}]).directive('lwRadio', function($parse) {
     return {
       //probably should allow transclusion if going to have css in here!
       template: '<div><input type="radio"><span class="padded"></div>',

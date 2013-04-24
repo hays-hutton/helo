@@ -6,10 +6,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
   <title>TEAM1 Auto Body & Glass</title>
+
   <link rel="stylesheet" href="css/normalize.css" />
   <link rel="stylesheet" href="css/foundation.css" />
   <link rel="stylesheet" href="css/select2.css" />
   <link rel="stylesheet" href="css/helo.css" />
+
   <script src="js/vendor/custom.modernizr.js"></script>
   <script src="js/jquery.js"></script>
   <script src="js/jquery-ui.js"></script>
@@ -38,6 +40,7 @@
         <ul class="left">
           <li><a href="#/agencies">Agencies</a></li>
           <li><a href="#/insurors">Insurors</a></li>
+          <li><a href="#/orgs">Orgs</a></li>
           <li><a href="#/people">People</a></li>
           <li class="divider"></li>
           <li><a href="#/referrals">Referrals</a></li>
@@ -51,11 +54,11 @@
   </div>
 
   <div class="row">
-    <div class="small-10 columns">
+    <div class="large-10 columns">
     <div ng-view></div>
    </div>
 
-    <div class="small-2 columns" ng-controller="SearchCtrl">
+    <div class="large-2 columns" ng-controller="SearchCtrl">
       <h3>Search</h3>
       query: {{searchModel}}
       <form name="search" >

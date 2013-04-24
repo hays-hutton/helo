@@ -1,7 +1,152 @@
 'use strict';
 
-function OrgCtrl($scope) { }
-function OrgsCtrl($scope) { }
+function OrgCtrl($scope, $routeParams, $http) {
+  $scope.data = [0, 5, 3,2,4,5,2,3,1,0,0,2,1,3,2,1,2,3,5,0,0,1,3];
+
+  $scope.id = $routeParams.id;
+  $scope.url = '/orgs/' + $scope.id;
+  $http.get($scope.url).success(function(data) {
+        $scope.org = data;
+        $scope.latitude = $scope.person['address/latitude'];
+        $scope.longitude = $scope.person['address/longitude'];
+        $scope.latLon =  new google.maps.LatLng($scope.latitude, $scope.longitude)
+        $scope.marker = new google.maps.Marker({map: $scope.myMap, position: $scope.latLon});
+        $scope.myMap.panTo($scope.latLon);
+      }).error(function(data) {
+        $scope.message = data.message;
+      });
+
+
+  $scope.message = "";
+  $scope.messageType = "";
+  $scope.resetMessage = function() {
+    $scope.message = "";
+    $scope.messageType = "";
+  }
+  $scope.setMessage = function(msg, msgType) {
+    $scope.message = msg;
+    $scope.messageType = msgType;
+  }
+  
+  $scope.setSelected = function(name) {
+    $scope.selected = name;
+    $scope.mapOptions = {
+      center: new google.maps.LatLng($scope.latitude, 0.000),
+      zoom: 13,
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    }
+  }
+
+  $scope.getShow = function(name) {
+    if(name === $scope.selected) {
+      return "selected";
+    } else {
+      return "";
+    }
+  }
+
+  $scope.getShowNote = function() {
+    if($scope.showNote) {
+      return "selected";
+    } else {
+      return "";
+    }
+  }
+
+  $scope.toggleNote = function() {
+    if($scope.showNote) {
+      $scope.showNote = false;
+    } else {
+      $scope.showNote = true;
+    }
+  }
+
+  $scope.setSelected('view');
+
+  $scope.mapOptions = {
+    center: new google.maps.LatLng(36.125349,-89.9662929),
+    zoom: 10,
+    mapTypeId: google.maps.MapTypeId.ROADMAP
+  }
+
+
+}
+function OrgsCtrl($scope, $http) {
+  $scope.offset = "0";
+  $scope.limit = "10";
+  $scope.message = "";
+  $scope.messageType = "";
+  $scope.resetMessage = function() {
+    $scope.message = "";
+    $scope.messageType = "";
+  }
+  $scope.setMessage = function(msg, msgType) {
+    $scope.message = msg;
+    $scope.messageType = msgType;
+  }
+  
+  $scope.setSelected = function(name) {
+    $scope.selected = name;
+    $scope.getOrgs();
+  }
+
+  $scope.getShow = function(name) {
+    if(name === $scope.selected) {
+      return "selected";
+    } else {
+      return "";
+    }
+  }
+  $scope.getOrgs = function() {
+    $http.get('/orgs', {params: {'offset': $scope.offset,
+                                 'limit': $scope.limit}}).success(
+                           function(data) {
+                             $scope.orgs = data.results;
+                             $scope.offset = data.offset;
+                             $scope.limit = data.limit;
+                             $scope.count = data.count;
+                             }).error(
+                               function(data) {
+                               $scope.message = data.message;
+                               $scope.messageType = 'alert';
+                               });
+  }
+
+  $scope.addOrg = function() {
+    $http.post('/orgs', {"name": $scope.name,
+                         "address": $scope.address,
+                         "email": $scope.email,
+                         "work": $scope.work,
+                         "fax": $scope.fax,
+                         "orgType": $scope.orgType,
+                         "parent": $scope.pid,
+                         "acctMgr": $scope.acctMgr,
+                         "note": $scope.note}).success(
+                      function(data) {
+                        $scope.message = data.message;
+                        $scope.messageType = 'success';
+                        $scope.resetAddOrg();
+                        $scope.setSelected('all');
+                      }).error(
+                        function(data) {
+                          $scope.message = data.message;
+                          $scope.messageType = 'alert';
+                        });
+  }
+
+  $scope.resetAddOrg = function() {
+    $scope.name = "";
+    $scope.address = "";
+    $scope.email = "";
+    $scope.work = "";
+    $scope.fax = "";
+    $scope.orgType = "";
+    $scope.pid = "";
+    $scope.acctMgr = "";
+    $scope.note = "";
+  }
+
+}
 function ReferralsCtrl($scope) { }
 function ReferralCtrl($scope) { }
 
@@ -51,7 +196,7 @@ function PeopleCtrl($scope, $http) {
   $scope.addPerson = function() {
     $http.post('/persons', {"person/first-name": $scope.firstName,
                             "person/last-name": $scope.lastName,
-                            "address/address": $scope.address,
+                            "address": $scope.address,
                             "person/email": $scope.email,
                             "person/cell": $scope.cell,
                             "person/home": $scope.home,
