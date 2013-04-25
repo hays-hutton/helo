@@ -68,14 +68,22 @@
    :type (:type entity)
   })
 
+(def label-to-org-type 
+  {"insuror" :org.type/insuror
+   "agency" :org.type/agency
+   "vendor" :org.type/vendor
+   "partner" :org.type/partner
+   "client" :org.type/client})
+
 (defn add-defaults [handler]
   (fn [tran]
     (let [org (first tran)
           who (:who org)
           org* (dissoc org :who)
+          otype (get label-to-org-type (:org/type org) :org.type/client)
           tstamp (java.util.Date.)
           tail (rest tran)]
-      (handler (vec (flatten (conj [(merge org* {:created-by who :updated-by who :created tstamp :updated tstamp :type :type/org})] tail)))))))
+      (handler (vec (flatten (conj [(merge org* {:org/type otype :created-by who :updated-by who :created tstamp :updated tstamp :type :type/org})] tail)))))))
 
 (defn add-note [handler]
   (fn [tran]
@@ -256,6 +264,10 @@
        (assoc :jobs (org-jobs org)))
       )))
 
+;TODO created org -> didn't get note nor cchannel
+; did set org.type (bad return val though)
+; no acctMgr set plus need to be able to add parent
+;
 (def create-org
   (-> (core/post)
       (add-defaults)

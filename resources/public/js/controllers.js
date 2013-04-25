@@ -102,6 +102,15 @@ function OrgsCtrl($scope, $http) {
   }
 
   $scope.addOrg = function() {
+    if(! $scope.acctMgr) {
+      console.log("setting it");
+      $scope.acctMgr = {id: ''};
+    } else {
+      if(! $scope.acctMgr.id) {
+        $scope.acctMgr.id = '';
+      }
+    }
+
     $http.post('/orgs', {"name": $scope.name,
                          "address": $scope.address,
                          "email": $scope.email,
@@ -109,7 +118,7 @@ function OrgsCtrl($scope, $http) {
                          "fax": $scope.fax,
                          "orgType": $scope.orgType,
                          "parent": $scope.pid,
-                         "acctMgr": $scope.acctMgr,
+                         "acctMgr": $scope.acctMgr.id,
                          "note": $scope.note}).success(
                       function(data) {
                         $scope.message = data.message;
@@ -143,17 +152,16 @@ function OrgsCtrl($scope, $http) {
     minimumInputLength: 2,
     quietMillis: 700,
     ajax: {
-      url: "/people?type=team",
+      url: "/search/people",
       datatype: 'json',
       data: function(term, page) {
+        term = term + '*';
         return {
           q: term,
-          page_limit: 20,
-          format: 'search'};
-      },
+          personType: 'team'};
+        },
       results: function(data, page) {
-        console.log(data);
-        return data; 
+        return {results: data}; 
       }
     }
   }
@@ -215,15 +223,26 @@ function PeopleCtrl($scope, $http) {
           }); }
 
   $scope.addPerson = function() {
-    $http.post('/persons', {"person/first-name": $scope.firstName,
-                            "person/last-name": $scope.lastName,
+    if(! $scope.org) {
+      console.log("setting it");
+      $scope.org = {id: ''};
+    } else {
+      if(! $scope.org.id) {
+        $scope.org.id = '';
+      }
+    }
+
+    $http.post('/persons', {"firstName": $scope.firstName,
+                            "lastName": $scope.lastName,
                             "address": $scope.address,
-                            "person/email": $scope.email,
-                            "person/cell": $scope.cell,
-                            "person/home": $scope.home,
-                            "person/work": $scope.work,
-                            "person/fax": $scope.fax,
-                            "note/note": $scope.note}).success(
+                            "email": $scope.email,
+                            "cell": $scope.cell,
+                            "home": $scope.home,
+                            "work": $scope.work,
+                            "fax": $scope.fax,
+                            "org": $scope.org.id,
+                            "personType": $scope.personType,
+                            "note": $scope.note}).success(
                       function(data) {
                         $scope.message = data.message;
                         $scope.messageType = 'success';
@@ -245,26 +264,17 @@ function PeopleCtrl($scope, $http) {
     minimumInputLength: 2,
     quietMillis: 700,
     ajax: {
-      url: "/orgs",
+      url: "/search/orgs",
       datatype: 'json',
       data: function(term, page) {
         term = term + '*';
         return {
-          search: term,
-          limit: 20,
-          offset: 0,
-          format: 'search'};
+          q: term
+        };
       },
       results: function(data, page) {
-        console.log(data);
-        var temp = [];
-        data.results.forEach(function(val) {
-            temp.push({id: val.id, text: val.name});
-            });
-        console.log(temp);
-        return {results: temp}; 
+        return {results: data}; 
       }
-          
     }
   }
 }

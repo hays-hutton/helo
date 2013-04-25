@@ -55,12 +55,12 @@
 
       <div class="row">
         <div class="large-6 columns">
-          <label>Parent Org <small>(e.g works at, belongs to)</small></label>
-          <input style="width: 100%" ui-select2="parentOrgOpts" ng-model="parentOrg"/>
+          <label>Organization <small>(e.g works at, belongs to)</small></label>
+          <input style="width: 100%" ui-select2="parentOrgOpts" ng-model="org"/>
         </div>
         <div class="large-6 columns">
           <label>Person Type <small>(Relation to TEAM1)</small></label>
-          <select ng-model="personType" ng-options="val.value as val.label for val in [{'label': 'Team Member', 'value':'1'},{'label': 'Partner', 'value':'2'},{'label':'Vendor', 'value':'3'},{'label':'Client', 'value':'4'}]">
+          <select ng-model="personType" ng-options="val.value as val.label for val in perTypes">
           </select>
         </div>
       </div>

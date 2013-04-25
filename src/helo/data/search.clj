@@ -45,7 +45,8 @@
    :type (:type entity)
   })
 
-(defn build-query [handler ent-type]
+(defn build-query
+ ([handler ent-type] 
   (fn [params]
     (let [q-map {:query '{:find [?e ?updated ?name ?region]
                             :in [$ ?search ?type]
@@ -54,9 +55,25 @@
                                  [?e :updated ?updated]
                                  [?e :address/region ?region]]}
                  :dbs []}
-          search (:search params)]
+          search (:q params)]
        (println "gonna" search)
-       (handler (update-in q-map [:dbs] concat [search ent-type])))))
+       (handler (update-in q-map [:dbs] concat [search ent-type]))))) 
+  ([handler ent-type sub-type sub-type-val]
+    (fn [params]
+      (let [q-map {:query '{:find [?e ?updated ?name ?region]
+                              :in [$ ?search ?type]
+                           :where [[?e :type ?type]
+                                   [(fulltext $ :name ?search) [[?e ?name]]]
+                                   [?e :updated ?updated]
+                                   [?e :address/region ?region]]}
+                   :dbs []}
+            search (:q params)]
+         (println "gonna" search)
+         (-> q-map
+           (update-in [:dbs] concat [search ent-type])
+           (update-in [:query :where] concat [['?e sub-type sub-type-val ]])
+           (handler)))))
+)
 
 (defn gen-response [handler]
   (fn [params]
@@ -64,7 +81,11 @@
           results (group-by #(nth % 3) (:results response)) ]
       (println "Response:" response)
       (println "Results:" results)
-       response
+        {:status 200
+         :headers {"Content-Type" "application/json"}
+         :body (json/encode 
+            (for  [[k v] results] {:text k :children  (into  []  (map  #(assoc {} :text  (nth % 2) :id  (nth % 0)) v))})) 
+        }
       )))
 
 (defn strip-outer-vec [handler]
@@ -79,3 +100,16 @@
       (strip-outer-vec)
       (core/remove-empty-keys)))
 
+(def search-people
+  (-> (core/query)
+      (build-query :type/person)
+      (gen-response)
+      (strip-outer-vec)
+      (core/remove-empty-keys)))
+
+(def search-acct-mgr
+  (-> (core/query)
+      (build-query :type/person :person/type :person.type/team-member)
+      (gen-response)
+      (strip-outer-vec)
+      (core/remove-empty-keys)))

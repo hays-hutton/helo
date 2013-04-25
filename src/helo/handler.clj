@@ -135,7 +135,9 @@
 (defroutes team-read-routes
   (route/resources "/" )
   (GET "/orgs" request (org/get-orgs request))
-  (GET "/search/orgs" request (search/get-orgs request))
+  (GET "/search/orgs" request (search/search-orgs request))
+  (GET "/search/people" request (search/search-people request))
+  (GET "/search/acctMgr" request (search/search-acct-mgr request))
   (GET "/orgs/:id" [id] (org/get-org id))
   (GET "/persons" request (per/get-persons request))
   (GET "/persons/:id" [id] (per/get-person id))

@@ -10,6 +10,26 @@
             [clj-time.coerce :only [to-date] ]
             [clojure.tools.logging :only [info error]]))
 
+(def ez-to-attr
+  {:lastName :person/last-name
+   :firstName :person/first-name
+   :phone :phone
+   :email :email
+   :fax :fax
+   :personType :person/type
+   :org :person/org
+   :note :note/note
+   :address/address :address/address
+   :address/street :address/street
+   :address/city :address/city
+   :address/region :address/region
+   :address/postal-code :address/postal-code
+   :address/latitude :address/latitude
+   :address/longitude :address/longitude
+   :address/provider :address/provider
+   :who :who
+  })
+
 (def person-record-keys
   [:person/first-name
    :person/last-name
@@ -23,21 +43,44 @@
    :note/note
    :who])
 
-(def valid-keys (vec (flatten (conj person-record-keys addr/address-record-keys))))
+;(def valid-keys (vec (flatten (conj person-record-keys addr/address-record-keys))))
+
+(def valid-keys
+ (concat [:firstName
+          :lastName
+          :phone
+          :fax
+          :email
+          :personType
+          :parentOrg
+          :note
+          :who] addr/address-record-keys))
 
 (def required-record-keys
-  [:person/last-name
-   :person/first-name])
+  [:lastName
+   :firstName 
+   :who])
 
+(def label-to-person-type 
+  {"team" :person.type/team-member
+   "csr" :person.type/csr
+   "agent" :person.type/agent
+   "producer" :person.type/producer
+   "adjuster" :person.type/adjuster
+   "claim" :person.type/claim
+   "client" :person.type/client
+   "vendor" :person.type/vendor
+})
 (defn add-defaults [handler]
   (fn [tran]
     (let [per (first tran)
           nme (str (:person/last-name per) ", " (:person/first-name per))
           who (:who per)
+          ptype (get label-to-person-type (:person/type per) :person.type/client)
           per* (dissoc per :who)
           tstamp (java.util.Date.)
           tail (rest tran)]
-      (handler (vec (flatten (conj [(merge per* {:name nme :created-by who :updated-by who :created tstamp :updated tstamp :type :type/person})] tail)))))))
+      (handler (vec (flatten (conj [(merge per* {:person/type ptype :name nme :created-by who :updated-by who :created tstamp :updated tstamp :type :type/person})] tail)))))))
 
 (defn add-note [handler]
   (fn [tran]
@@ -58,12 +101,12 @@
 (defn add-email [handler]
   (fn [tran]
     (let [per (first tran)]
-      (if (contains? per :person/email)
-        (if-let [email (utils/to-email (:person/email per))]
+      (if (contains? per :email)
+        (if-let [email (utils/to-email (:email per))]
           (let [email-id (d/tempid :db.part/user)
                 who (:who per)
                 chans (:person/cchannels per)
-                per* (dissoc per :person/email)]
+                per* (dissoc per :email)]
             (if-let [tail (rest tran)]
               (handler (vec (flatten [(assoc per* :person/cchannels (conj chans email-id)) tail (cchan/phone-map email-id email :cchannel.type/email who)])))
               (handler [(assoc per*  :person/cchannels (conj chans email-id)) (cchan/phone-map email-id email :cchannel.type/email who)])))
@@ -106,11 +149,11 @@
       (add-note)
       (add-sms)
       (add-email)
-      (add-phone :person/fax :cchannel.type/fax)
-      (add-phone :person/work :cchannel.type/work)
-      (add-phone :person/home :cchannel.type/home)
-      (add-phone :person/cell :cchannel.type/cell)
+      (add-phone :work :cchannel.type/work)
+      (add-phone :home :cchannel.type/home)
+      (add-phone :cell :cchannel.type/cell)
       (core/add-key)
+      (core/translate-keys ez-to-attr)
       (core/min-required-keys required-record-keys)
       (core/valid-keys valid-keys)
       (core/remove-empty-keys)
@@ -197,6 +240,9 @@
                            :count (:count response)
                            :type :persons
                            :results pers})})))
+
+
+
 (def filter-clauses
   {"team" '[[?e :person/type :person.type/team-member]] 
    "csr" '[[?e :person/type :person.type/csr]] 

@@ -4,6 +4,12 @@
             [cheshire.core :as json]
   ))
 
-(defn get-orgs [{params :params}]
+(defn search-orgs [{params :params}]
   (search/search-orgs params))
 
+(defn search-people [{params :params}]
+  (search/search-people params))
+
+
+(defn search-acct-mgr [{params :params}]
+  (search/search-acct-mgr params))
