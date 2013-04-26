@@ -32,15 +32,9 @@
       <legend>Org</legend>
 
       <div class="row">
-        <div class="large-4 columns">
+        <div class="large-12 columns">
           <label>Name</label>
           <input type="text" ng-model="name" placeholder="Name"/>
-        </div>
-        <div class="large-4 columns">
-          <label>Account Manager <small>Team Member</small></label>
-          <input ui-select2="acctMgrOpts" ng-model="acctMgr"/>
-        </div>
-        <div class="large-4 columns">
         </div>
       </div>
 
@@ -50,6 +44,18 @@
           <input type="text" ng-model="address" placeholder="address"/>
         </div>
       </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+          <label>Parent</label>
+          <input style="width: 100%" ui-select2="parentOrgOpts" ng-model="org"/>
+        </div>
+        <div class="large-6 columns">
+          <label>Account Manager <small>Team Member</small></label>
+          <input style="width: 100%" ui-select2="acctMgrOpts" ng-model="acctMgr"/>
+        </div>
+      </div>
+
 
       <div class="row">
         <div class="large-6 columns">

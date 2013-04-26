@@ -1,4 +1,4 @@
-<h2>{{org.name}} -- Org</h2>
+<h2>{{org.name}} -- {{org.orgType | initcap }}</h2>
 <hr/>
 <div class="alert-box" ng-class="messageType" ng-show="messageType">
   {{message}}
@@ -19,29 +19,37 @@
     <div class="columns large-3">
       <div id="map-canvas" ui-map="myMap" ui-options="mapOptions" class="map">hello</div>
     </div>
-    <div class="columns large-3">
-      <h6>Type</h6>
-      <div>{{org.orgType}}</div>
-      <h6>Address</h6>
-      <div>{{org.street}}</div>
-      <div>{{org.city}}, {{org.state}} {{org.zip}}</div>
-    </div>
- 
-    <div class="columns large-3">
-      <h6>Activity</h6>
-      <div>{{org.updated | date:'short'}} last update </div>
-      <div>{{org.created | date:'short'}} created at</div>
-      <h5 ui-jq="sparkline" ui-options="data,{type: 'bar'}"></h5>
-      <h5 ui-jq="sparkline" ui-options="data,{type: 'line'}"></h5>
-    </div>
-
-    <div class="columns large-3">
-      <h6>CChannels</h6>
-      <div ng-repeat="cchan in org.cchannels">
-        <a ng-href="#/cchannels/{{cchan.id}}">{{cchan.name}}</a>
+    <div class="columns large-9">
+      <div class="row">
+        <div class="columns large-12">
+          <span class="address"> <h6>Address:</h6> {{org.street}} {{org.city}}, {{org.state}} {{org.zip}}</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="columns large-3">
+          <h6>Parent</h6>
+          <div><a ng-href="/#/orgs/{{org.parent}}">{{org.parentName}}</a></div>
+          <h6>Activity</h6>
+          <div>{{org.updated | date:'short'}} last update </div>
+          <div>{{org.created | date:'short'}} created at</div>
+          <h5 ui-jq="sparkline" ui-options="data,{type: 'bar'}"></h5>
+          <h5 ui-jq="sparkline" ui-options="data,{type: 'line'}"></h5>
+        </div>
+        <div class="columns large-3">
+            <h6>CChannels</h6>
+            <div ng-repeat="cchan in org.cchannels">
+              <a ng-href="#/cchannels/{{cchan.id}}">{{cchan.name}}</a>
+            </div>
+        </div>
+        <div class="columns large-3">
+            <h6>Children</h6>
+        </div>
+        <div class="columns large-3">
+          <h6>Something</h6>
+        </div>
       </div>
     </div>
- </div>
+  </div>
   <div class="row"> 
     <div class="columns large-6" ng-controller="NotesCtrl">
       <h6>Notes</h6>

@@ -50,7 +50,7 @@
 
 (defn limit-query [handler]
   (fn [params]
-    (let [limit (Integer/parseInt (get params :limit "10")) 
+    (let [limit (Integer/parseInt (get params :limit "30")) 
           offset (Integer/parseInt (get params :offset "0")) 
           response (handler params)
           results (:results response)

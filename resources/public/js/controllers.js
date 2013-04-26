@@ -55,7 +55,7 @@ function OrgCtrl($scope, $routeParams, $http) {
 
 function OrgsCtrl($scope, $http) {
   $scope.offset = "0";
-  $scope.limit = "10";
+  $scope.limit = "30";
   $scope.message = "";
   $scope.messageType = "";
   $scope.resetMessage = function() {
@@ -146,13 +146,33 @@ function OrgsCtrl($scope, $http) {
 
   $scope.setSelected('all');
 
+  $scope.org = '';
+  $scope.parentOrgOpts = {
+    placeholder: "Parent Org",
+    minimumInputLength: 2,
+    quietMillis: 700,
+    ajax: {
+      url: "/search/orgs",
+      datatype: 'json',
+      data: function(term, page) {
+        term = term + '*';
+        return {
+          q: term
+        };
+      },
+      results: function(data, page) {
+        return {results: data}; 
+      }
+    }
+  }
+
   $scope.acctMgr = '';
   $scope.acctMgrOpts = {
     placeholder: "Acct Mgr",
     minimumInputLength: 2,
     quietMillis: 700,
     ajax: {
-      url: "/search/people",
+      url: "/search/acctMgr",
       datatype: 'json',
       data: function(term, page) {
         term = term + '*';

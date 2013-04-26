@@ -18,7 +18,7 @@
    :orgType :org/type
    :parent :org/parent
    :acctMgr :org/acct-mgr
-   :note :note/note
+   :note :note
    :address/address :address/address
    :address/street :address/street
    :address/city :address/city
@@ -48,21 +48,27 @@
   [:name 
    :who])
 
+(def org-type-to-label
+  {:org.type/insuror "insuror" 
+   :org.type/agency "agency" 
+   :org.type/vendor "vendor"
+   :org.type/partner "partner" 
+   :org.type/client "client" })
 
 (defn ent-to-org-map [entity]
   {:id (:db/id entity)
    :name (:name entity)
-   :parent (:db/id (:parent entity))
-   :parentName (:name (:parent entity))
-   :acctMgr (:db/id (:acct-mgr entity ))
-   :acctMgrName (:name (:acct-mgr entity))
+   :parent (:db/id (:org/parent entity))
+   :parentName (:name (:org/parent entity))
+   :acctMgr (:db/id (:org/acct-mgr entity ))
+   :acctMgrName (:name (:org/acct-mgr entity))
    :street (:address/street entity)
    :city (:address/city entity)
    :state (:address/region entity)
    :zip (:address/postal-code entity)
    :lat (:address/latitude entity)
    :lon (:address/longitude entity)
-   :orgType (:org/type entity)
+   :orgType (org-type-to-label (:org/type entity)) 
    :updated (:updated entity)
    :created (:created entity)
    :type (:type entity)
@@ -74,6 +80,8 @@
    "vendor" :org.type/vendor
    "partner" :org.type/partner
    "client" :org.type/client})
+
+
 
 (defn add-defaults [handler]
   (fn [tran]
