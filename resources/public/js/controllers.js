@@ -111,13 +111,23 @@ function OrgsCtrl($scope, $http) {
       }
     }
 
+    if(! $scope.pid) {
+      console.log("setting it");
+      $scope.pid = {id: ''};
+    } else {
+      if(! $scope.pid.id) {
+        $scope.pid.id = '';
+      }
+    }
+
+
     $http.post('/orgs', {"name": $scope.name,
                          "address": $scope.address,
                          "email": $scope.email,
                          "work": $scope.work,
                          "fax": $scope.fax,
                          "orgType": $scope.orgType,
-                         "parent": $scope.pid,
+                         "parent": $scope.pid.id,
                          "acctMgr": $scope.acctMgr.id,
                          "note": $scope.note}).success(
                       function(data) {
@@ -337,8 +347,8 @@ function PersonCtrl($scope, $routeParams, $http) {
   $scope.url = '/persons/' + $scope.id;
   $http.get($scope.url).success(function(data) {
         $scope.person = data;
-        $scope.latitude = $scope.person['address/latitude'];
-        $scope.longitude = $scope.person['address/longitude'];
+        $scope.latitude = $scope.person.lat;
+        $scope.longitude = $scope.person.lon;
         $scope.latLon =  new google.maps.LatLng($scope.latitude, $scope.longitude)
         $scope.marker = new google.maps.Marker({map: $scope.myMap, position: $scope.latLon});
         $scope.myMap.panTo($scope.latLon);
@@ -360,11 +370,6 @@ function PersonCtrl($scope, $routeParams, $http) {
   
   $scope.setSelected = function(name) {
     $scope.selected = name;
-    $scope.mapOptions = {
-      center: new google.maps.LatLng($scope.latitude, 0.000),
-      zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    }
   }
 
   $scope.getShow = function(name) {

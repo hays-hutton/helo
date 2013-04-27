@@ -6,13 +6,11 @@
             [helo.data.notes :as notes]
             [helo.utils.uri :as utils]
             [cheshire.core :as json]
-            [clj-time.core :only [from-now minutes weeks] ]
-            [clj-time.coerce :only [to-date] ]
             [clojure.tools.logging :only [info error]]))
 
 (def ez-to-attr
   {:name :name
-   :phone :phone
+   :work :work
    :email :email
    :fax :fax
    :orgType :org/type
@@ -27,15 +25,14 @@
    :address/latitude :address/latitude
    :address/longitude :address/longitude
    :address/provider :address/provider
-   :who :who
-  })
+   :who :who})
 
 (def attr-to-ez
   (zipmap (vals ez-to-attr) (keys ez-to-attr)))
 
 (def valid-keys
  (concat [:name
-          :phone
+          :work
           :fax
           :email
           :orgType
@@ -53,7 +50,7 @@
    :org.type/agency "agency" 
    :org.type/vendor "vendor"
    :org.type/partner "partner" 
-   :org.type/client "client" })
+   :org.type/client "client"})
 
 (defn ent-to-org-map [entity]
   {:id (:db/id entity)
@@ -71,8 +68,7 @@
    :orgType (org-type-to-label (:org/type entity)) 
    :updated (:updated entity)
    :created (:created entity)
-   :type (:type entity)
-  })
+   :type (:type entity)})
 
 (def label-to-org-type 
   {"insuror" :org.type/insuror
@@ -80,8 +76,6 @@
    "vendor" :org.type/vendor
    "partner" :org.type/partner
    "client" :org.type/client})
-
-
 
 (defn add-defaults [handler]
   (fn [tran]
@@ -91,7 +85,12 @@
           otype (get label-to-org-type (:org/type org) :org.type/client)
           tstamp (java.util.Date.)
           tail (rest tran)]
-      (handler (vec (flatten (conj [(merge org* {:org/type otype :created-by who :updated-by who :created tstamp :updated tstamp :type :type/org})] tail)))))))
+      (handler (vec (flatten (conj [(merge org* {:org/type otype
+                                                 :created-by who 
+                                                 :updated-by who 
+                                                 :created tstamp
+                                                 :updated tstamp
+                                                 :type :type/org})] tail)))))))
 
 (defn add-note [handler]
   (fn [tran]
@@ -124,7 +123,6 @@
           {:status 400 :body (json/encode {:message (str "Bad email for :org/email " (:email org))})})
         (handler tran)))))
 
-
 (defn add-phone [handler k phone-type]
   (fn [tran]
     (let [org (first tran)]
@@ -140,16 +138,14 @@
           {:status 400 :body (json/encode {:message (str "Bad phone number for " k " " (k org))})})
         (handler tran)))))
 
-(defn build-defaults [handler]
-  (fn [tran]
-    (let [org (first tran)
-          who (:who org)
-          org* (dissoc org :who)
-          tstamp (java.util.Date.)
-          tail (rest tran)]
-      (handler (vec (flatten (conj [(merge org* {:created-by who :updated-by who :created tstamp :updated tstamp :type :type/org})] tail)))))))
-
-
+;(defn build-defaults [handler]
+;  (fn [tran]
+;    (let [org (first tran)
+;          who (:who org)
+;          org* (dissoc org :who)
+;          tstamp (java.util.Date.)
+;          tail (rest tran)]
+;      (handler (vec (flatten (conj [(merge org* {:created-by who :updated-by who :created tstamp :updated tstamp :type :type/org})] tail)))))))
 
 (def filter-clauses
   {"insuror" '[[?e :org/type :org.type/insuror]] 
@@ -161,6 +157,7 @@
 (defn search-clause [search]
   (if search
     '[[(fulltext $ :name ?search) [[?e ?name]]]]  ))
+
 (defn in-clause [search]
   (if search
     '[?search]))
@@ -213,43 +210,14 @@
       (strip-outer-vec)
       (core/remove-empty-keys)))
 
-(def org-query-keys [:db/id 
-                     :name
-                     :updated
-                     :created 
-                     :address/street
-                     :address/city
-                     :address/region
-                     :address/postal-code
-                     :address/latitude
-                     :address/longitude
-                     ]
-)
-
 (defn build-cchannel [cchannel]
   {:name (:name cchannel)
    :cchannel (:cchannel/cchannel cchannel)
-   :id (:db/id cchannel)
-  }
-)
-
-(defn build-note [note]
-  {:name (:name note)
-   :by-name (:name (:note/by note)) 
-   :by-id (:db/id (:note/by note)) 
-   :note (:note/note note)
-   :created (:created note)
-  }
-)
+   :id (:db/id cchannel)})
 
 (defn org-cchannels [entity]
   (if-let [cchannels (:org/cchannels entity)]
     (map #(build-cchannel %) cchannels)))
-
-
-(defn org-notes [entity]
-  (if-let [notes (:note/_parent entity)]
-    (map #(build-note %) notes)))
 
 (defn org-jobs [entity]
   (if-let [jobs (:jobs/_client entity)]
@@ -269,26 +237,20 @@
      (-> o-map
        (assoc :cchannels (org-cchannels org))
        (assoc :referrals (org-referrals org))
-       (assoc :jobs (org-jobs org)))
-      )))
+       (assoc :jobs (org-jobs org))))))
 
-;TODO created org -> didn't get note nor cchannel
-; did set org.type (bad return val though)
-; no acctMgr set plus need to be able to add parent
-;
 (def create-org
   (-> (core/post)
       (add-defaults)
       (add-note)
       (add-email)
       (add-phone :fax :cchannel.type/fax)
-      (add-phone :phone :cchannel.type/work)
+      (add-phone :work :cchannel.type/work)
       (core/add-key)
       (core/translate-keys ez-to-attr)
       (core/min-required-keys required-record-keys)
       (core/valid-keys valid-keys)
-      (core/remove-empty-keys)
-))
+      (core/remove-empty-keys)))
 
 (defn ncode  [handler]
   (fn  [request]
@@ -299,4 +261,4 @@
 
 (def read-org
   (-> (org-query)
-    (ncode)))
+      (ncode)))
