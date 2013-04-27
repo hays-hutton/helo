@@ -120,7 +120,6 @@ function OrgsCtrl($scope, $http) {
       }
     }
 
-
     $http.post('/orgs', {"name": $scope.name,
                          "address": $scope.address,
                          "email": $scope.email,
@@ -244,13 +243,15 @@ function PeopleCtrl($scope, $http) {
     $scope.fax = "";
     $scope.note = "";
   }
+
   $scope.getPersons = function() {
     $http.get('/persons' ).success( function(data) {
         $scope.count = data.count;
         $scope.list = data.results;
         }).error(function(data) {
           $scope.setMessage(data);
-          }); }
+          });
+  }
 
   $scope.addPerson = function() {
     if(! $scope.org) {
@@ -270,7 +271,7 @@ function PeopleCtrl($scope, $http) {
                             "home": $scope.home,
                             "work": $scope.work,
                             "fax": $scope.fax,
-                            "org": $scope.org.id,
+                            "parent": $scope.org.id,
                             "personType": $scope.personType,
                             "note": $scope.note}).success(
                       function(data) {

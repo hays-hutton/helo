@@ -1,4 +1,4 @@
-<h2>{{person.name}} -- Person</h2>
+<h2>{{person.name}} -- {{person.personType | initcap}}</h2>
 <hr/>
 <div class="alert-box" ng-class="messageType" ng-show="messageType">
   {{message}}
@@ -30,9 +30,9 @@
     </div>
     <div class="columns small-3">
       <h6>Address</h6>
-      <div>{{person['person/first-name']}} {{person['person/last-name']}}</div>
-      <div>{{person['address/street']}}</div>
-      <div>{{person['address/city']}}, {{person['address/region']}} {{person['address/postalCode']}}</div>
+      <div>{{person.firstName}} {{person.lastName}}</div>
+      <div>{{person.street}}</div>
+      <div>{{person.city}}, {{person.state}} {{person.zip}}</div>
     </div>
  
     <div class="columns small-3">

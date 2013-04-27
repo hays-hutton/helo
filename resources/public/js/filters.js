@@ -13,6 +13,8 @@ angular.module('helo.filters', []).
       }
   }).filter('initcap', function() {
     return function(text) {
-      return text.substring(0,1).toUpperCase() + text.substring(1).toLowerCase();
+      if(text) {
+        return text.substring(0,1).toUpperCase() + text.substring(1).toLowerCase();
+      }
     }
   });

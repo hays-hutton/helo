@@ -6,18 +6,17 @@
             [helo.data.notes :as notes]
             [helo.utils.uri :as utils]
             [cheshire.core :as json]
-            [clj-time.core :only [from-now minutes weeks] ]
-            [clj-time.coerce :only [to-date] ]
             [clojure.tools.logging :only [info error]]))
 
 (def ez-to-attr
   {:lastName :person/last-name
    :firstName :person/first-name
-   :phone :phone
+   :work :work
+   :home :home
    :email :email
    :fax :fax
    :personType :person/type
-   :org :person/org
+   :parent :person/org
    :note :note/note
    :address/address :address/address
    :address/street :address/street
@@ -27,32 +26,17 @@
    :address/latitude :address/latitude
    :address/longitude :address/longitude
    :address/provider :address/provider
-   :who :who
-  })
-
-(def person-record-keys
-  [:person/first-name
-   :person/last-name
-   :person/org
-   :person/acct-mgr
-   :person/email
-   :person/cell
-   :person/home
-   :person/work
-   :person/fax
-   :note/note
-   :who])
-
-;(def valid-keys (vec (flatten (conj person-record-keys addr/address-record-keys))))
+   :who :who})
 
 (def valid-keys
  (concat [:firstName
           :lastName
-          :phone
+          :home
+          :work
           :fax
           :email
           :personType
-          :parentOrg
+          :parent
           :note
           :who] addr/address-record-keys))
 
@@ -69,8 +53,11 @@
    "adjuster" :person.type/adjuster
    "claim" :person.type/claim
    "client" :person.type/client
-   "vendor" :person.type/vendor
-})
+   "vendor" :person.type/vendor})
+
+(def person-type-to-label
+  (zipmap (vals label-to-person-type) (keys label-to-person-type)))
+
 (defn add-defaults [handler]
   (fn [tran]
     (let [per (first tran)
@@ -80,6 +67,7 @@
           per* (dissoc per :who)
           tstamp (java.util.Date.)
           tail (rest tran)]
+      (println "type" ptype)
       (handler (vec (flatten (conj [(merge per* {:person/type ptype :name nme :created-by who :updated-by who :created tstamp :updated tstamp :type :type/person})] tail)))))))
 
 (defn add-note [handler]
@@ -156,77 +144,63 @@
       (core/translate-keys ez-to-attr)
       (core/min-required-keys required-record-keys)
       (core/valid-keys valid-keys)
-      (core/remove-empty-keys)
-))
+      (core/remove-empty-keys)))
 
+;(defn persons-query []
+;  (fn [request]
+;    (let [dbval (db core/conn)
+;          quer '{:find [?e ?updated ?name]
+;                :in [$]
+;                :where [[?e :type :type/person]
+;                        [?e :name ?name]
+;                        [?e :updated ?updated]]} ]
+;      (d/q quer dbval))))
 
-(defn build-defaults [handler]
-  (fn [tran]
-    (let [per (first tran)
-          nme (str (:person/last-name per) ", " (:person/first-name per))
-          who (:who per)
-          per* (dissoc per :who)
-          tstamp (java.util.Date.)
-          tail (rest tran)]
-      (handler (vec (flatten (conj [(merge per* {:name nme :created-by who :updated-by who :created tstamp :updated tstamp :type :type/person})] tail)))))))
+;(defn sort-by-second [handler]
+;  (fn [request]
+;    (let [response (handler request)]
+;      (core/sort-by-second (vec response)))))
 
-(defn persons-query []
-  (fn [request]
-    (let [dbval (db core/conn)
-          quer '{:find [?e ?updated ?name]
-                :in [$]
-                :where [[?e :type :type/person]
-                        [?e :name ?name]
-                        [?e :updated ?updated]]} ]
-      (d/q quer dbval))))
-
-(defn sort-by-second [handler]
-  (fn [request]
-    (let [response (handler request)]
-      (core/sort-by-second (vec response)))))
-
-(defn build-structure [handler]
-  (fn [request]
-    (println "build:" request)
-    (let [response (handler request)
-          people (map #(zipmap [:id :updated :name] %) response)
-          cnt (count people)]
-    {:type :collection
-     :name "People"
-     :length cnt
-     :list people
-    })))
+;(defn build-structure [handler]
+;  (fn [request]
+;    (println "build:" request)
+;    (let [response (handler request)
+;          people (map #(zipmap [:id :updated :name] %) response)
+;          cnt (count people)]
+;    {:type :collection
+;     :name "People"
+;     :length cnt
+;     :list people
+;    })))
 
 (defn ncode [handler]
   (fn [request]
     (let [response (handler request)]
       {:status 200
-       :body (json/encode response)
-      })))
+       :body (json/encode response)})))
 
-(def read-persons2
-  (-> (persons-query)
-      (sort-by-second)
-      (build-structure)
-      (ncode)
-      (core/remove-empty-keys)))
+;(def read-persons2
+;  (-> (persons-query)
+;      (sort-by-second)
+;      (build-structure)
+;      (ncode)
+;      (core/remove-empty-keys)))
 
 (defn ent-to-per-map [entity]
   {:id (:db/id entity)
    :name (:name entity)
-   :parent (:db/id (:parent entity))
-   :parentName (:name (:parent entity))
+   :parent (:db/id (:person/org entity))
+   :parentName (:name (:person/org entity))
    :street (:address/street entity)
    :city (:address/city entity)
    :state (:address/region entity)
    :zip (:address/postal-code entity)
    :lat (:address/latitude entity)
    :lon (:address/longitude entity)
-   :personType (:person/type entity)
+   :personType (person-type-to-label (:person/type entity)) 
    :updated (:updated entity)
    :created (:created entity)
-   :type (:type entity)
-  })
+   :type (:type entity) })
 
 (defn gen-response [handler]
   (fn [params]
@@ -240,8 +214,6 @@
                            :count (:count response)
                            :type :persons
                            :results pers})})))
-
-
 
 (def filter-clauses
   {"team" '[[?e :person/type :person.type/team-member]] 
@@ -296,45 +268,15 @@
       (strip-outer-vec)
       (core/remove-empty-keys)))
 
-(def per-query-keys [:db/id 
-                     :name
-                     :updated
-                     :created 
-                     :person/first-name
-                     :person/last-name
-                     :address/street
-                     :address/city
-                     :address/region
-                     :address/postal-code
-                     :address/latitude
-                     :address/longitude
-                     ]
-)
-
 (defn build-cchannel [cchannel]
   {:name (:name cchannel)
    :cchannel (:cchannel/cchannel cchannel)
    :id (:db/id cchannel)
-  }
-)
-
-(defn build-note [note]
-  {:name (:name note)
-   :by-name (:name (:note/by note)) 
-   :by-id (:db/id (:note/by note)) 
-   :note (:note/note note)
-   :created (:created note)
-  }
-)
+  })
 
 (defn person-cchannels [entity]
   (if-let [cchannels (:person/cchannels entity)]
     (map #(build-cchannel %) cchannels)))
-
-
-(defn person-notes [entity]
-  (if-let [notes (:note/_parent entity)]
-    (map #(build-note %) notes)))
 
 (defn person-jobs [entity]
   (if-let [jobs (:jobs/_client entity)]
@@ -350,15 +292,12 @@
     (let [dbval (db core/conn)
           nid (Long/parseLong id)
           person (d/entity dbval nid) 
-          p-map (select-keys person per-query-keys ) ]
+          p-map (ent-to-per-map person) ]
      (-> p-map
        (assoc :cchannels (person-cchannels person))
        (assoc :referrals (person-referrals person))
-       (assoc :jobs (person-jobs person)))
-      )))
-
+       (assoc :jobs (person-jobs person))))))
 
 (def read-person
   (-> (person-query)
-      (ncode) )
-)
+      (ncode)))

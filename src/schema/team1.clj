@@ -97,7 +97,7 @@
   {:db/id #db/id[:db.part/db]
    :db/ident :person/type
    :db/valueType :db.type/ref
-   :db/cardinality :db.cardinality/many
+   :db/cardinality :db.cardinality/one
    :db.install/_attribute :db.part/db
   }
 

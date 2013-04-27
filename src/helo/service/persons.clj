@@ -3,17 +3,13 @@
           [helo.data.persons :as pers]
           [cheshire.core :as json]))
 
-;;TODO fix :id versus :uuid
 (defn get-person [id]
   (println "service/get-person: " id)
-  (pers/read-person id)
-)
+  (pers/read-person id))
 
 (defn get-persons [{params :params}]
   (println "service/get-persons")
-  (pers/read-persons params )
-
-)
+  (pers/read-persons params))
 
 ;POST to /persons -> Create a Person
 (defn post-persons [{params :params}]
