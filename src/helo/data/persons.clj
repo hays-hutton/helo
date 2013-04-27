@@ -67,7 +67,6 @@
           per* (dissoc per :who)
           tstamp (java.util.Date.)
           tail (rest tran)]
-      (println "type" ptype)
       (handler (vec (flatten (conj [(merge per* {:person/type ptype :name nme :created-by who :updated-by who :created tstamp :updated tstamp :type :type/person})] tail)))))))
 
 (defn add-note [handler]
@@ -146,45 +145,11 @@
       (core/valid-keys valid-keys)
       (core/remove-empty-keys)))
 
-;(defn persons-query []
-;  (fn [request]
-;    (let [dbval (db core/conn)
-;          quer '{:find [?e ?updated ?name]
-;                :in [$]
-;                :where [[?e :type :type/person]
-;                        [?e :name ?name]
-;                        [?e :updated ?updated]]} ]
-;      (d/q quer dbval))))
-
-;(defn sort-by-second [handler]
-;  (fn [request]
-;    (let [response (handler request)]
-;      (core/sort-by-second (vec response)))))
-
-;(defn build-structure [handler]
-;  (fn [request]
-;    (println "build:" request)
-;    (let [response (handler request)
-;          people (map #(zipmap [:id :updated :name] %) response)
-;          cnt (count people)]
-;    {:type :collection
-;     :name "People"
-;     :length cnt
-;     :list people
-;    })))
-
 (defn ncode [handler]
   (fn [request]
     (let [response (handler request)]
       {:status 200
        :body (json/encode response)})))
-
-;(def read-persons2
-;  (-> (persons-query)
-;      (sort-by-second)
-;      (build-structure)
-;      (ncode)
-;      (core/remove-empty-keys)))
 
 (defn ent-to-per-map [entity]
   {:id (:db/id entity)
@@ -246,7 +211,6 @@
                  :dbs []}
           filt (:filter params)
           search (:search params)]
-       (println "gonna" filt ":" search)
        (if (or filt search) 
          (handler (-> q-map 
                       (update-in [:query :where] concat (filter-clauses filt))
@@ -288,7 +252,6 @@
 
 (defn person-query []
   (fn [id]
-    (println "hello" id)
     (let [dbval (db core/conn)
           nid (Long/parseLong id)
           person (d/entity dbval nid) 
