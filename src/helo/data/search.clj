@@ -88,10 +88,53 @@
         }
       )))
 
+(def chan-type-to-label
+  {:cchannel.type/cell "cell" 
+   :cchannel.type/sms "sms"
+   :cchannel.type/work "work"
+   :cchannel.type/fax "fax"
+   :cchannel.type/email "email"
+   :cchannel.type/unknown "unknown"})
+  
+(defn ent-to-cchan-list [entity]
+  {:id (:db/id entity)
+   :name (:name entity)
+   :cchan (:cchannel/cchannel entity)
+   :chanType (get chan-type-to-label (:cchannel/type entity) "unknown")})
+
+(defn ent-to-org-list-map [entity]
+  {:id (:db/id entity)
+   :name (:name entity)
+   :acctMgrName (:name (:org/acct-mgr entity))
+   :acctMgr (:db/id (:org/acct-mgr entity))
+   :cchannels (into [] (map #(ent-to-cchan-list %) (:org/cchannels entity) ))
+   :state (:address/region entity)})
+
+(defn gen-list-response [handler]
+  (fn [params]
+    (let [response (handler params)
+          ents (map #(d/entity (:dbval response) (first %)) (sort-by #(nth % 2) (:results response)))
+          results (into [] (map #(ent-to-org-list-map %) ents))]
+      (println "Response:" response)
+      (println "Results:" results)
+        {:status 200
+         :headers {"Content-Type" "application/json"}
+         :body (json/encode results) 
+        }
+      )))
+
 (defn strip-outer-vec [handler]
   (fn [v]
     (let [m (first v)]
       (handler m))))
+
+(def search-orgs-list
+  (-> (core/query)
+      (build-query :type/org)
+      (gen-list-response)
+      (strip-outer-vec)
+      (core/remove-empty-keys)))
+
 
 (def search-orgs
   (-> (core/query)

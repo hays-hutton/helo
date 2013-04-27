@@ -35,8 +35,7 @@
    :updated (:updated entity)
    :name (:name entity)
    :id (:db/id entity)
-   :type (:type entity)
-})
+   :type (:type entity)})
 
 (defn add-defaults [handler]
   (fn [tran]
@@ -96,7 +95,6 @@
       (core/valid-keys valid-keys)
       (core/remove-empty-keys)))
 
-
 (defn note-map  [parent-id note who]
   (let  [tstamp  (java.util.Date.)
         length  (count note)]
@@ -110,5 +108,4 @@
      :created-by who
      :updated tstamp
      :created tstamp
-     :type :type/note}
-))
+     :type :type/note}))

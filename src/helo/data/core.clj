@@ -80,5 +80,5 @@
     (try 
       @(d/transact conn tran)
       (println "The record: " tran)
-      {:status 200 :body (json/encode {:message "tran"})}
+      {:status 200 :body (json/encode {:message (str "Created: " (:type (first tran)) " ->" (:name (first tran)) )} )}
       (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))

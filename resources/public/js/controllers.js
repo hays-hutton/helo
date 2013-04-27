@@ -86,20 +86,21 @@ function OrgsCtrl($scope, $http) {
                      {'label': 'Partner', 'value': 'partner'},
                      {'label': 'Client', 'value': 'client'}];
 
+
   $scope.getOrgs = function() {
-    $http.get('/orgs', {params: {'offset': $scope.offset,
-                                 'limit': $scope.limit}}).success(
+    $http.get('/search/orgs-list', {params: {'q': $scope.orgsFilter + '*'}}).success(
                            function(data) {
-                             $scope.orgs = data.results;
-                             $scope.offset = data.offset;
-                             $scope.limit = data.limit;
-                             $scope.count = data.count;
+                             $scope.orgs = data;
                              }).error(
                                function(data) {
                                $scope.message = data.message;
                                $scope.messageType = 'alert';
                                });
   }
+
+  $scope.$watch('orgsFilter', function(newV,oldV,scope) {
+     $scope.getOrgs();
+     });
 
   $scope.addOrg = function() {
     if(! $scope.acctMgr) {

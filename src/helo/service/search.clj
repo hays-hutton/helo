@@ -7,6 +7,9 @@
 (defn search-orgs [{params :params}]
   (search/search-orgs params))
 
+(defn search-orgs-list [{params :params}]
+  (search/search-orgs-list params))
+
 (defn search-people [{params :params}]
   (search/search-people params))
 
