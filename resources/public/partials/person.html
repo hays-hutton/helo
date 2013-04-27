@@ -1,9 +1,6 @@
 <h2>{{person.name}} -- {{person.personType | initcap}}</h2>
 <hr/>
-<div class="alert-box" ng-class="messageType" ng-show="messageType">
-  {{message}}
-  <a ng-click="resetMessage()" class="close">&times;</a>
-</div>
+<div helo-msg></div>
 
 <div class="row">
   <div class="small-12 columns">

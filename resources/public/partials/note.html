@@ -1,0 +1,13 @@
+<div ng-controller="NotesCtrl">
+  <h6>Notes</h6>
+    <form>
+      <textarea ng-model="note"></textarea>
+      <button class="small" ng-click="addNote()">Add Note</button>
+    </form>
+    <div ng-repeat="note in notes" >
+      <div>{{note.updated | date: 'medium'}} by <a ng-href="#/persons/{{note.byId}}">{{note.byName}}</a> </div>
+      <div class="panel">{{note.note}}</div>
+    </div>
+    <div ng-show="more()"><button ng-click="appendMore()">Show More...</button></div>
+</div>
+

@@ -148,5 +148,12 @@ angular.module('helo.directives', [])
       
       }
     };
+  }).directive('heloMsg', function($parse) {
+    return {
+      templateUrl: 'partials/msg.html',
+      replace: true,
+      link: function postLink(scope, iElem, iAttrs, control) {
+      }
+    };
   })
 ;
