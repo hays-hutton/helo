@@ -140,5 +140,13 @@ angular.module('helo.directives', [])
         };
         iElem.bind('change', onChange);
       }};
+  }).directive('heloNotes', function($parse) {
+    return {
+      templateUrl: 'partials/note.html',
+      replace: true,
+      link: function postLink(scope, iElem, iAttrs, control) {
+      
+      }
+    };
   })
 ;

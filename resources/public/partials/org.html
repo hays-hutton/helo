@@ -51,18 +51,7 @@
     </div>
   </div>
   <div class="row"> 
-    <div class="columns large-6" ng-controller="NotesCtrl">
-      <h6>Notes</h6>
-      <form>
-        <textarea ng-model="note"></textarea>
-        <button class="small" ng-click="addNote()">Add Note</button>
-      </form>
-      <div ng-repeat="note in notes" >
-        <div>{{note.updated | date: 'medium'}} by <a ng-href="#/persons/{{note.byId}}">{{note.byName}}</a> </div>
-        <div class="panel">{{note.note}}</div>
-      </div>
-      <div ng-show="more()"><button ng-click="appendMore()">Show More...</button></div>
-    </div>
+    <div class="columns large-6" helo-notes></div>
     <div class="columns large-3">
       <h6>Referrals</h6>
       <div ng-repeat="refer in org.referrals">
