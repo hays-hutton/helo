@@ -217,6 +217,8 @@ function OrgsCtrl($scope, $http) {
 function HomeCtrl($scope, $http) {
    $scope.limit = 30;
    $scope.offset = 0;
+   $scope.sequence = 0;
+   var requestSequence = 0;
    
    $scope.getEntities = function() {
      var p = {};
@@ -225,10 +227,15 @@ function HomeCtrl($scope, $http) {
      if( $scope.entitiesFilter ) {
        p.q = $scope.entitiesFilter + '*';
      }
-     console.log("p", p);
+     requestSequence += 1;
+     p.sequence = requestSequence;
      $http.get('/entities', {params: p}).success(function(data){
-         $scope.entities = data.entities;
-         $scope.properties = data.properties;
+         //This promotes both to  number for comparison. Note the '+'
+         if($scope.sequence < +data.properties.sequence) {
+           $scope.sequence = data.properties.sequence;
+           $scope.entities = data.entities;
+           $scope.properties = data.properties;
+         }
        }).error(function(data) {
          $scope.message = data.message;
          $scope.messageType = 'alert';
@@ -237,6 +244,44 @@ function HomeCtrl($scope, $http) {
    $scope.$watch('entitiesFilter', function() {
        $scope.getEntities();
      });
+   $scope.iconClass = function(entityType, entitySubType) {
+     console.log(entityType, entitySubType);
+     switch(entityType) {
+       case 'org':
+         return 'icon-office';
+         break;
+       case 'person':
+         return 'icon-user';
+         break;
+       case 'cchannel':
+         switch(entitySubType) {
+           case 'cell':
+             return 'icon-mobile-2';
+             break;
+           case 'work':
+             return 'icon-phone';
+             break;
+           case 'home':
+             return 'icon-phone';
+             break;
+           case 'email':
+             return 'icon-envelope';
+             break;
+         }
+         break;
+       case 'note':
+         return 'icon-book-alt2';
+         break;
+       case 'referral':
+         return 'icon-share';
+         break;
+       case 'comm':
+         return 'icon-arrow-right';
+         break;
+       default:
+         return 'icon-question-sign';
+     }
+   }
 }
 
 function ReferralsCtrl($scope) { }
@@ -353,37 +398,6 @@ function PeopleCtrl($scope, $http) {
   }
 }
 
-function SearchCtrl($scope, $routeParams, $http) {
-  $scope.searchModel = '';
-  $scope.sel = {
-    placeholder: "Parent Org",
-    minimumInputLength: 2,
-    quietMillis: 700,
-    ajax: {
-      url: "/orgs",
-      datatype: 'json',
-      data: function(term, page) {
-        term = term + '*';
-        return {
-          search: term,
-          limit: 20,
-          offset: 0,
-          format: 'search'};
-      },
-      results: function(data, page) {
-        console.log(data);
-        var temp = [];
-        data.results.forEach(function(val) {
-            temp.push({id: val.id, text: val.name});
-            });
-        console.log(temp);
-        return {results: temp}; 
-      }
-          
-    }
-  }
-}
-
 function PersonCtrl($scope, $routeParams, $http) {
   $scope.data = [0, 5, 3,2,4,5,2,3,1,0,0,2,1,3,2,1,2,3,5,0,0,1,3];
 
@@ -399,7 +413,6 @@ function PersonCtrl($scope, $routeParams, $http) {
       }).error(function(data) {
         $scope.message = data.message;
       });
-
 
   $scope.message = "";
   $scope.messageType = "";
@@ -431,7 +444,6 @@ function PersonCtrl($scope, $routeParams, $http) {
     zoom: 10,
     mapTypeId: google.maps.MapTypeId.ROADMAP
   }
-
 }
 
 function CommCtrl($scope) { }
@@ -485,7 +497,8 @@ function NotesCtrl($scope, $http) {
   }
 
   $scope.more = function() {
-    if($scope.count > $scope.offset) {
+    // TODO verify '+' needed
+    if(+$scope.count > $scope.offset) {
       return true;
     } else {
       return false;
@@ -494,7 +507,8 @@ function NotesCtrl($scope, $http) {
 
   $scope.appendMore = function() {
     var rOffset = $scope.offset + $scope.limit;
-    if($scope.count > $scope.offset) {
+    //TODO verify '+' needed
+    if(+$scope.count > $scope.offset) {
       $http.get('/notes', {params: {'parent': $scope.id,
                                     'offset': rOffset, 
                                     'limit': $scope.limit}}).success(

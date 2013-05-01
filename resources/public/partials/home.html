@@ -3,7 +3,7 @@
   <div class="large-6 columns">
     <form><input type="text" placeholder="Find Something By Name" ng-model="entitiesFilter"/></form>
   </div>
-  <div class="large-6 columns">
+  <div class="large-6 columns hide-for-small">
     <span class="right">Showing {{properties.offset}} thru {{properties.limit}} of {{properties.count}} total</span>
   </div>
 </div>
@@ -22,12 +22,12 @@
       <tbody>
         <tr ng-repeat="ent in entities" >
           <td>
-            <a ng-href="#{{ent.href}}">{{ent.properties.name}}</a>
+            <a ng-href="#{{ent.href}}"> <span ng-class="iconClass(ent.properties.type, ent.properties.subType)"> {{ent.properties.name}} </span></a>
           </td>
           <td class="hide-for-small">
             {{ent.properties.region}}
           </td>
-          <td>
+          <td class="hide-for-small">
             {{ent.properties.type}}
           </td>
           <td class="hide-for-small">

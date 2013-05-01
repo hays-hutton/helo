@@ -8,6 +8,13 @@
             [cheshire.core :as json]
             [clojure.tools.logging :only [info error]]))
 
+(def valid-keys
+  [:q
+   :sequence
+   :limit
+   :offset
+   :type]
+)
 
 (def filter-clauses
   {"insuror" '[[?e :org/type :org.type/insuror]] 
@@ -88,7 +95,8 @@
        :body  ( json/encode {:class [:things :medium-collection]
                              :properties { :offset (:offset response)
                                            :limit (:limit response)
-                                           :count (:count response)}
+                                           :count (:count response)
+                                           :sequence (:sequence params) }
                              :entities entities})})))
 
 (def get-entities
@@ -97,4 +105,5 @@
       (core/limit-query)
       (gen-response)
       (core/strip-outer-vec)
+      (core/valid-keys valid-keys)
       (core/remove-empty-keys)))
