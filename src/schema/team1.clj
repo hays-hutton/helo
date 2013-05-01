@@ -1,15 +1,4 @@
 [
-  ;; An External Key. Every entity has to have one. It is generic too.
-  ;; and it should never change in the world of REST.
-  {:db/id #db/id[:db.part/db]
-   :db/ident :url
-   :db/valueType :db.type/string
-   :db/unique :db.unique/identity
-   :db/index true
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
   {:db/id #db/id[:db.part/db]
    :db/ident :type
    :db/valueType :db.type/ref
@@ -65,7 +54,6 @@
   }
 
   ;; person
-
   {:db/id #db/id[:db.part/db]
    :db/ident :person/first-name
    :db/valueType :db.type/string
@@ -155,46 +143,7 @@
 
   ;; referral
   ;; the goal 
-  ;;
-
   ;; referrER-TAG 
-  {:db/id #db/id[:db.part/db]
-   :db/ident :referral/er-tag
-   :db/valueType :db.type/string
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db }
-
-  ;; er-tag-type
-  ;; referrER-TAG-TYPE ->  referral-tag.type enum
-  ;; as will referrEE-TAG-TYPE
-  {:db/id #db/id[:db.part/db]
-   :db/ident :referral/er-tag-type
-   :db/valueType :db.type/ref
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
-  {:db/id #db/id[:db.part/db]
-   :db/ident :referral/ee-tag
-   :db/valueType :db.type/string
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
-  {:db/id #db/id[:db.part/db]
-   :db/ident :referral/ee-tag-type
-   :db/valueType :db.type/ref
-   :db/cardinality :db.cardinality/one
-   :db.install/_attribute :db.part/db
-  }
-
-  [:db/add #db/id[:db.part/user] :db/ident :referral-tag.type/phone]
-  [:db/add #db/id[:db.part/user] :db/ident :referral-tag.type/cell]
-  [:db/add #db/id[:db.part/user] :db/ident :referral-tag.type/land-line]
-  [:db/add #db/id[:db.part/user] :db/ident :referral-tag.type/email]
-  [:db/add #db/id[:db.part/user] :db/ident :referral-tag.type/unknown]
-
-  ;; the person who referred (if known/identified)
   {:db/id #db/id[:db.part/db]
    :db/ident :referral/er-cchannel
    :db/valueType :db.type/ref
@@ -202,7 +151,6 @@
    :db.install/_attribute :db.part/db
   }
 
-  ;; the person who was referred (if known)
   {:db/id #db/id[:db.part/db]
    :db/ident :referral/ee-cchannel
    :db/valueType :db.type/ref
