@@ -4,55 +4,49 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1">
   <title>TEAM1 Auto Body -- Refer Someone</title>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-  <script type="text/javascript">window.jQuery || document.write('<script src="./js/libs/jquery-1.9.1.min.js"><\/script>')</script>
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
-
   <link type="text/css" rel="stylesheet" href="./css/foundation.css">
-  <link type="text/css" rel="stylesheet" href="./css/helo.css">
 </head>
 <body>
   <div class="row">
     <div class="large-8 columns">
-        <div class="border-bottom">
-          <h1 class="responsive 0" data-compression="5.65" data-min="20" data-max="20"><a href="#"><img src="images/t1-logo.jpg"/></a></h1>
-          <form action="/referrals" method="POST">
-            <fieldset>
-              <legend>Refer Someone</legend>
-              <label>Your Cell</label>
-              <p>
-              <input name="er-tag" type="tel" pattern='^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$' title='Phone Number (Format: [+1]3145551212 or (314)555-1212 )' placeholder="Enter your cell phone number">
-              </p>
-              <label>Their Cell</label>
-              <p>
-              <input name="ee-tag" type="tel" pattern='^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$' title='Phone Number (Format: [+1]3145551212 or (314)555-1212 )' placeholder="Enter their cell phone number">
-              </p>
-                <button type="submit" class="button success">Refer</button>
-                <label>
-                  Note
-                </label>
-                <p>
-                <textarea name="note" placeholder="Anything we should know?"></textarea>
-                </p>
-            </fieldset>
-          </form>
-        </div>
-      </div>
-      <div class="large-4 columns">
-        <h1>Refer Someone!</h1>
-        <div>
-          <h4>Instructions</h4>
-          <ol>
-            <li>Enter the cell phone number associated with your account</li>
-            <li>Enter their cell phone</li>
-            <li>Submit it.</li>
-            <li>System confirms receipt.</li>
-          </ol>
-        </div>
-      </div>
+      <h1><a href="#"><img src="images/t1-logo.jpg"/></a></h1>
+      <form action="/referrals" method="POST">
+        <fieldset>
+          <legend>Refer Someone</legend>
+          <label>Your Cell</label>
+          <p>
+          <input name="erTag" type="tel" pattern='^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$' title='Phone Number (Format: [+1]3145551212 or (314)555-1212 )' placeholder="Enter your cell phone number">
+          </p>
+          <label>Their Cell</label>
+          <p>
+          <input name="eeTag" type="tel" pattern='^(?:\+?1[-. ]?)?\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$' title='Phone Number (Format: [+1]3145551212 or (314)555-1212 )' placeholder="Enter their cell phone number">
+          </p>
+            <button type="submit" class="button success">Refer</button>
+            <label>
+              Note
+            </label>
+            <p>
+            <textarea name="note" placeholder="Anything we should know?"></textarea>
+            </p>
+        </fieldset>
+      </form>
+    </div>
+    <div class="large-4 columns">
+      <h1>Refer Someone!</h1>
+      <h4>Instructions</h4>
+      <ol>
+        <li>Enter the cell phone number associated with your account.</li>
+        <li>Enter the cell phone number of the person you are referring to us.</li>
+        <li>Submit it.</li>
+        <li>System confirms receipt.</li>
+        <li>We take it from there while keeping you informed!</li>
+      </ol>
+    </div>
   </div>
-  <footer class="footer">
-    <p>&copy; 2013 TEAM1 Auto Body &amp; Glass.  <a href="mailto:help@team1.com">Need Help</a></p>
-  </footer>
+  <div class="row">
+    <div class="large-12 columns">
+      <p>&copy; 2013 TEAM1 Auto Body &amp; Glass.  <a href="mailto:help@team1.com">Need Help</a></p>
+    </div>
+  </div>
 </body>
 </html>

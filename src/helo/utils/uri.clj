@@ -45,7 +45,7 @@
   (string/replace value #"tel:|sms:" ""))
 
 (defn raw [value]
-  (string/replace value #"tel:\+1|email:|sms:" ""))
+  (string/replace value #"tel:\+1|email:|sms:|unk:" ""))
 
 (defn to-map [uri]
   (if-let [v (clojure.string/split uri #":" 2)]

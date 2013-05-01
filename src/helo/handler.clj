@@ -11,6 +11,7 @@
             [helo.service.search :as search]
             [helo.service.notes :as nte]
             [helo.service.persons :as per]
+            [helo.service.referrals :as rfr]
             [cheshire.core :as json]
             [clojure.pprint])
   (:import org.apache.commons.codec.binary.Base64))
@@ -144,6 +145,7 @@
   (GET "/orgs/:id" [id] (org/get-org id))
   (GET "/persons" request (per/get-persons request))
   (GET "/persons/:id" [id] (per/get-person id))
+  (GET "/referrals/:id" [id] (rfr/get-referral id))
   (GET "/notes" request (nte/get-notes request))
 ;  (GET "/notes/:id" request  (nte/get-note request))
 )
@@ -167,6 +169,7 @@
   (wrap-auth team-write-routes #{:role.person/team-member})
   (POST "/request-pin" [cell]  (request-pin cell))
   (POST "/pin" [pin]  (post-pin pin))
+  (POST "/referrals" request  (rfr/post-referral request))
   (GET "/hello" request (resp/response "hello world"))
   (route/not-found (resp/file-response "not-found.html" {:root "resources/public"}))
 )
