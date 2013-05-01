@@ -8,6 +8,27 @@
 (def uri "datomic:free://localhost:4334/team1")
 (def conn (d/connect uri))
 
+(def type->label
+  {:type/org "org"
+   :type/person "person"
+   :type/cchannel "cchannel"
+   :type/referral "referral"
+   :type/job "job"
+   :type/note "note"
+   :type/comm "comm"})
+
+(def type->coll
+  {:type/org "orgs"
+   :type/person "persons"
+   :type/cchannel "cchannels"
+   :type/referral "referrals"
+   :type/job "jobs"
+   :type/note "notes"
+   :type/comm "comms"})
+
+(defn ent->href [entity]
+  (str "/" ((:type entity) type->coll) "/" (:db/id entity)))
+
 (defn sort-by-updated [maps]
   (sort-by :updated #(compare (tc/to-long %2) (tc/to-long %1 )) maps))
 
@@ -82,3 +103,11 @@
       (println "The record: " tran)
       {:status 200 :body (json/encode {:message (str "Created: " (:type (first tran)) " ->" (:name (first tran)) )} )}
       (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))
+
+
+(defn strip-outer-vec [handler]
+  (fn [v]
+    (let [m (first v)]
+      (handler m))))
+
+

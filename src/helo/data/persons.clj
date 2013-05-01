@@ -11,10 +11,10 @@
 (def ez-to-attr
   {:lastName :person/last-name
    :firstName :person/first-name
+   :cell :cell
    :work :work
    :home :home
    :email :email
-   :fax :fax
    :personType :person/type
    :parent :person/org
    :note :note/note
@@ -33,7 +33,7 @@
           :lastName
           :home
           :work
-          :fax
+          :cell
           :email
           :personType
           :parent

@@ -1,0 +1,40 @@
+
+<div id="search-box" class="row">
+  <div class="large-6 columns">
+    <form><input type="text" placeholder="Find Something By Name" ng-model="entitiesFilter"/></form>
+  </div>
+  <div class="large-6 columns">
+    <span class="right">Showing {{properties.offset}} thru {{properties.limit}} of {{properties.count}} total</span>
+  </div>
+</div>
+
+<div class="row">
+  <div class="large-12 columns">
+    <table width="100%">
+      <thead class="hide-for-small">
+        <tr>
+          <th>Name</th>
+          <th>Market</th>
+          <th>Type</th>
+          <th>Sub Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="ent in entities" >
+          <td>
+            <a ng-href="#{{ent.href}}">{{ent.properties.name}}</a>
+          </td>
+          <td class="hide-for-small">
+            {{ent.properties.region}}
+          </td>
+          <td>
+            {{ent.properties.type}}
+          </td>
+          <td class="hide-for-small">
+            {{ent.properties.subType}}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

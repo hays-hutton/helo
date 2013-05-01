@@ -86,8 +86,21 @@ function OrgsCtrl($scope, $http) {
                      {'label': 'Partner', 'value': 'partner'},
                      {'label': 'Client', 'value': 'client'}];
 
-
   $scope.getOrgs = function() {
+    $http.get('/orgs', {params: {'limit':  $scope.limit,
+                                 'offset': $scope.offset}
+                       }).success(
+                           function(data) {
+                             $scope.orgs = data.results;
+                             }).error(
+                               function(data) {
+                               $scope.message = data.message;
+                               $scope.messageType = 'alert';
+                               });
+  }
+
+
+  $scope.getOrgsList = function() {
     $http.get('/search/orgs-list', {params: {'q': $scope.orgsFilter + '*'}}).success(
                            function(data) {
                              $scope.orgs = data;
@@ -99,8 +112,12 @@ function OrgsCtrl($scope, $http) {
   }
 
   $scope.$watch('orgsFilter', function(newV,oldV,scope) {
-     $scope.getOrgs();
-     });
+     if(newV == '') {
+       $scope.getOrgs();
+     } else {
+       $scope.getOrgsList();
+     }
+  });
 
   $scope.addOrg = function() {
     if(! $scope.acctMgr) {
@@ -195,6 +212,31 @@ function OrgsCtrl($scope, $http) {
       }
     }
   }
+}
+
+function HomeCtrl($scope, $http) {
+   $scope.limit = 30;
+   $scope.offset = 0;
+   
+   $scope.getEntities = function() {
+     var p = {};
+     p.limit = $scope.limit;
+     p.offset = $scope.offset;
+     if( $scope.entitiesFilter ) {
+       p.q = $scope.entitiesFilter + '*';
+     }
+     console.log("p", p);
+     $http.get('/entities', {params: p}).success(function(data){
+         $scope.entities = data.entities;
+         $scope.properties = data.properties;
+       }).error(function(data) {
+         $scope.message = data.message;
+         $scope.messageType = 'alert';
+       });
+   }
+   $scope.$watch('entitiesFilter', function() {
+       $scope.getEntities();
+     });
 }
 
 function ReferralsCtrl($scope) { }

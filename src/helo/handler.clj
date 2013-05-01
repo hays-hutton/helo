@@ -7,6 +7,7 @@
             [ring.util.response :as resp]
             [helo.service.auth :as auth]
             [helo.service.orgs :as org]
+            [helo.service.entities :as ent]
             [helo.service.search :as search]
             [helo.service.notes :as nte]
             [helo.service.persons :as per]
@@ -135,6 +136,7 @@
 (defroutes team-read-routes
   (route/resources "/" )
   (GET "/orgs" request (org/get-orgs request))
+  (GET "/entities" request (ent/get-entities request))
   (GET "/search/orgs" request (search/search-orgs request))
   (GET "/search/orgs-list" request (search/search-orgs-list request))
   (GET "/search/people" request (search/search-people request))
