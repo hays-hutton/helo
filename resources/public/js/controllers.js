@@ -285,7 +285,38 @@ function HomeCtrl($scope, $http) {
 }
 
 function ReferralsCtrl($scope) { }
-function ReferralCtrl($scope) { }
+function ReferralCtrl($scope, $routeParams, $http) {
+  $scope.id = $routeParams.id;
+  $http.get('/referrals/' + $scope.id).success(function(data) {
+      $scope.properties = data.properties;
+      $scope.href = data.href;
+      data.entities.forEach(function(entity) {
+        console.log("entity", entity.class[0]);
+        switch(entity.class[0]){
+          case "ee":
+            $scope.ee = entity;
+            break;
+          case "er":
+            $scope.er = entity;
+            break;
+          case "eeCChan":
+            $scope.eeCChan = entity;
+            break;
+          case "erCChan":
+            console.log("set");
+            $scope.erCChan = entity;
+            break;
+          case "owner":
+            $scope.owner = entity;
+            break;
+          default:
+            console.log(entity['class'][0]);
+        };});
+      }).error(function(data) {
+        });
+
+
+}
 
 function PeopleCtrl($scope, $http) {
   $scope.message = "";

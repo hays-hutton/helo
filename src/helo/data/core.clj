@@ -27,7 +27,9 @@
    :type/comm "comms"})
 
 (defn ent->href [entity]
-  (str "/" ((:type entity) type->coll) "/" (:db/id entity)))
+  (if entity 
+    (str "/" ((:type entity) type->coll) "/" (:db/id entity))
+    ""))
 
 (defn sort-by-updated [maps]
   (sort-by :updated #(compare (tc/to-long %2) (tc/to-long %1 )) maps))
@@ -110,4 +112,15 @@
     (let [m (first v)]
       (handler m))))
 
-
+(defn base-prop [entity]
+  (if entity
+    {:id (:db/id entity)
+     :name (:name entity)
+     :created (:created entity)
+     :createdBy (:db/id (:created-by entity) ) 
+     :createdByName (:name (:created-by entity))
+     :updated (:updated entity)
+     :updatedBy (:db/id (:updated-by entity)) 
+     :updatedByName (:name (:updated-by entity))
+     :type ((:type entity) type->label)}
+    {}))

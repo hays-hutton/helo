@@ -47,6 +47,10 @@
 (defn raw [value]
   (string/replace value #"tel:\+1|email:|sms:|unk:" ""))
 
+(defn searchable [value]
+  (println "value:" value)
+  (string/replace (to-uri value) #"\+1" ""))
+
 (defn to-map [uri]
   (if-let [v (clojure.string/split uri #":" 2)]
     {:scheme (first v)
