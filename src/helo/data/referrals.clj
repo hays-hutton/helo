@@ -166,23 +166,23 @@
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body (json/encode {:class [ "referral" ]
-                           :properties (assoc (core/base-prop entity) :status (rfr-status-to-label (:referral/status entity))) 
+                           :properties (core/base-prop entity :referral/status rfr-status-to-label) 
                            :entities [ {:class ["er"]
-                                        :properties (assoc (core/base-prop er) :subType ((:person/type er) per/person-type-to-label) ) 
+                                        :properties (core/base-prop er :person/type per/person-type-to-label)
                                         :href (core/ent->href er)}
                                        {:class ["ee"]
-                                        :properties (assoc (core/base-prop ee) :subType ((:person/type ee) per/person-type-to-label) )
+                                        :properties (core/base-prop ee :person/type per/person-type-to-label)
                                         :href (core/ent->href ee)}
                                        {:class ["erCChan"]
-                                        :properties (core/base-prop er-cchan)
+                                        :properties (core/base-prop er-cchan :cchannel/type cchan/cchannel-type-to-label)
                                         :href (core/ent->href er-cchan)
                                        }
                                        {:class ["eeCChan"]
-                                        :properties (core/base-prop ee-cchan)
+                                        :properties (core/base-prop ee-cchan :cchannel/type cchan/cchannel-type-to-label)
                                         :href (core/ent->href ee-cchan)
                                        }
                                        {:class ["owner"]
-                                        :properties (core/base-prop owner)
+                                        :properties (core/base-prop owner :person/type per/person-type-to-label)
                                         :href (core/ent->href owner)}]
                            :href (core/ent->href entity)})})))
 

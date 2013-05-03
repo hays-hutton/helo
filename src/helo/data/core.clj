@@ -112,7 +112,7 @@
     (let [m (first v)]
       (handler m))))
 
-(defn base-prop [entity]
+(defn base-prop [entity k sub-type->label]
   (if entity
     {:id (:db/id entity)
      :name (:name entity)
@@ -122,5 +122,6 @@
      :updated (:updated entity)
      :updatedBy (:db/id (:updated-by entity)) 
      :updatedByName (:name (:updated-by entity))
-     :type ((:type entity) type->label)}
+     :type ((:type entity) type->label)
+     :subType ((k entity) sub-type->label)}
     {}))
