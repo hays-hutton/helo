@@ -153,7 +153,82 @@
           rfr (d/entity dbval rid)]
      (if (= :type/referral (:type rfr))
        rfr))))
- 
+
+(defn- action-set-owner [entity]
+  {:name "set owner" 
+   :title "Set Owner"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :owner :type "text" :value "true" }]})
+
+(defn- action-set-ee-cchan [entity]
+  {:name "set eeCChan" 
+   :title "Set EE CChannel"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :eeCChan :type "text" :value "" }]})
+
+(defn- action-set-er-cchan [entity]
+  {:name "set erCChan" 
+   :title "Set ER CChannel"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :erCChan :type "text" :value "" }]})
+
+(defn- action-set-ee-quiet [entity]
+  {:name "set EE quiet " 
+   :title "Set EE Quiet"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :eeQuiet :type "text" :value "true" }]})
+
+(defn- action-set-ee-loud [entity]
+  {:name "set EE loud" 
+   :title "Set EE Loud"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :eeLoud :type "text" :value "true" }]})
+
+(defn- action-set-er-quiet [entity]
+  {:name "set ER quiet " 
+   :title "Set ER Quiet"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :erQuiet :type "text" :value "true" }]})
+
+(defn- action-set-er-loud [entity]
+  {:name "set ER loud " 
+   :title "Set ER Loud"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :erLoud :type "text" :value "true" }]})
+
+(defn- action-cancel [entity]
+  {:name "cancel" 
+   :title "Cancel Referral"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :status :type "text" :value "cancel"}]})
+
+(defn toggle-ee-loud [entity]
+  (if (:referral/ee-quiet? entity)
+    (action-set-ee-quiet entity)
+    (action-set-ee-loud entity)))
+
+(defn toggle-er-loud [entity]
+  (if (:referral/er-quiet? entity)
+    (action-set-er-quiet entity)
+    (action-set-er-loud entity)))
+
+(defn ref-actions [entity]
+  (case (:referral/status entity)
+    :referral.status/new [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
+    :referral.status/owned [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
+    :referral.status/scheduled [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
+    :referral.status/in [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
+    :referral.status/completed [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
+    :referral.status/other [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]))
+
 (defn gen-response [handler]
   (fn [params]
     (let [entity (handler params)
@@ -162,11 +237,11 @@
           ee (first (:person/_cchannels (:referral/ee-cchannel entity)))
           ee-cchan (:referral/ee-cchannel entity)
           owner (:referral/owner entity) ]
-      (println "er" er " ee" ee " er-cchan" er-cchan " ee-cchan" ee-cchan  " owner" owner)
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body (json/encode {:class [ "referral" ]
                            :properties (core/base-prop entity :referral/status rfr-status-to-label) 
+                           :actions [ (ref-actions entity)]
                            :entities [ {:class ["er"]
                                         :properties (core/base-prop er :person/type per/person-type-to-label)
                                         :href (core/ent->href er)}
@@ -175,17 +250,24 @@
                                         :href (core/ent->href ee)}
                                        {:class ["erCChan"]
                                         :properties (core/base-prop er-cchan :cchannel/type cchan/cchannel-type-to-label)
-                                        :href (core/ent->href er-cchan)
-                                       }
+                                        :href (core/ent->href er-cchan)}
                                        {:class ["eeCChan"]
                                         :properties (core/base-prop ee-cchan :cchannel/type cchan/cchannel-type-to-label)
-                                        :href (core/ent->href ee-cchan)
-                                       }
+                                        :href (core/ent->href ee-cchan)}
                                        {:class ["owner"]
                                         :properties (core/base-prop owner :person/type per/person-type-to-label)
                                         :href (core/ent->href owner)}]
                            :href (core/ent->href entity)})})))
-
 (def read-referral
   (-> (referral-query)
       (gen-response)))
+
+
+(defn update [handler]
+  (fn [tran]
+    (let [m (first tran)
+          id (Long/parseLong (:id m))
+          owner (:who m)
+] 
+;[tran (clojure.set/rename-keys (dissoc (first params) :owner) {:id :db/id :who :referral/owner}) ]
+      (handler [{:db/id id :referral/owner owner :referral/status :referral.status/owned :updated (java.util.Date.) :updated-by (:who m)   }]))))

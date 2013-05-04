@@ -298,11 +298,12 @@ function HomeCtrl($scope, $http) {
 }
 
 function ReferralsCtrl($scope) { }
-function ReferralCtrl($scope, $routeParams, $http) {
+function ReferralCtrl($scope, $routeParams, $route,  $http) {
   $scope.id = $routeParams.id;
   $http.get('/referrals/' + $scope.id).success(function(data) {
       $scope.properties = data.properties;
       $scope.href = data.href;
+      $scope.actions = data.actions[0];
       data.entities.forEach(function(entity) {
         console.log("entity", entity.class[0]);
         switch(entity.class[0]){
@@ -328,7 +329,24 @@ function ReferralCtrl($scope, $routeParams, $http) {
       }).error(function(data) {
         });
 
+  $scope.doAction = function(m) {
+    var payload = {};
+    m.fields.forEach(function(field) {
+        payload[field.name] = field.value;
+        });
 
+    $http({method : m.method,
+       url : m.href,
+       data : payload
+       }).success(function(data) {
+       console.log("Action response data:" , data);
+       $scope.response = data;
+       //;$scope.reset();
+       $route.reload();
+    }).error(function(data) {
+        $scope.error = data.error;
+    });
+  }
 }
 
 function PeopleCtrl($scope, $http) {

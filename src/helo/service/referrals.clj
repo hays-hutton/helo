@@ -21,5 +21,16 @@
       (dc/valid-keys rfr/valid-keys)
       (dc/remove-empty-keys)))
 
-(defn post-referral [{params :params}]
+(def update-referral
+  (-> (dc/post)
+      (rfr/update)
+      (dc/remove-empty-keys)))
+
+(defn post-referrals [{params :params}]
   (create-referral params))
+
+(defn post-referral [{params :params}]
+  (println "update:" params)
+  (update-referral params)
+
+)

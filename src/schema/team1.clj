@@ -144,6 +144,7 @@
   ;; referral
   ;; the goal 
   ;; referrER-TAG 
+;;
   {:db/id #db/id[:db.part/db]
    :db/ident :referral/er-cchannel
    :db/valueType :db.type/ref
@@ -154,6 +155,20 @@
   {:db/id #db/id[:db.part/db]
    :db/ident :referral/ee-cchannel
    :db/valueType :db.type/ref
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :referral/er-quiet?
+   :db/valueType :db.type/boolean
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :referral/ee-quiet?
+   :db/valueType :db.type/boolean
    :db/cardinality :db.cardinality/one
    :db.install/_attribute :db.part/db
   }
