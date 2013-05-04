@@ -1,44 +1,11 @@
-<h2>Orgs</h2>
-<hr/>
 <div class="alert-box" ng-class="messageType" ng-show="messageType">
   {{message}}
   <a ng-click="resetMessage()" class="close">&times;</a>
 </div>
 
-<div class="row">
-  <div class="large-12 columns">
-    <div class="left">
-      <form><input type="text" placeholder="Find Org By Name" ng-model="orgsFilter"/></form>
-    </div>
-    <div class="right">
-      <button class="tiny button" ng-class="getShow('all')" ng-click="setSelected('all');">Find Org</button>
-      <button class="tiny button" ng-class="getShow('addOrg')" ng-click="setSelected('addOrg');">Add Org</button>
-    </div>
-  </div>
-</div>
-
-<div ng-show="getShow('all')">
-    <div ng-repeat="org in orgs" >
-      <div  ng-class-even="'even'" class="row">
-        <div class="large-4 columns">
-          <a ng-href="#/orgs/{{org.id}}">{{org.name}}</a>
-        </div>
-        <div class="large-5 columns">
-          {{org.state}}
-        </div>
-        <div class="large-3 columns">
-          <span class="right">
-            <a ng-href="#/persons/{{org.acctMgr}}">{{org.acctMgrName}}</a>
-          </span>
-        </div>
-      </div>
-    </div>
-</div>
-
-<div ng-show="getShow('addOrg')">
   <form>
     <fieldset>
-      <legend>Org</legend>
+      <legend>Add Org</legend>
 
       <div class="row">
         <div class="large-12 columns">
@@ -108,13 +75,3 @@
       </div>
     </fieldset>
   </form>
-
-  <div class="row">
-    <div class="large-12 columns">
-      {{name}} {{address}}
-    </div>
-    <div class="large-12 columns">
-      {{orgType}}
-    </div>
-  </div>
-</div>

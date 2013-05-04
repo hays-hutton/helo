@@ -53,7 +53,7 @@ function OrgCtrl($scope, $routeParams, $http) {
   }
 }
 
-function OrgsCtrl($scope, $http) {
+function OrgsCtrl($scope, $http, $location) {
   $scope.offset = "0";
   $scope.limit = "30";
   $scope.message = "";
@@ -150,8 +150,9 @@ function OrgsCtrl($scope, $http) {
                       function(data) {
                         $scope.message = data.message;
                         $scope.messageType = 'success';
-                        $scope.resetAddOrg();
-                        $scope.setSelected('all');
+                        $location.path('/');
+                        //$scope.resetAddOrg();
+                        //$scope.setSelected('all');
                       }).error(
                         function(data) {
                           $scope.message = data.message;
@@ -215,6 +216,18 @@ function OrgsCtrl($scope, $http) {
 }
 
 function HomeCtrl($scope, $http) {
+    $scope.message = "";
+    $scope.messageType = "";
+    $scope.resetMessage = function() {
+      $scope.message = "";
+      $scope.messageType = "";
+    }
+    $scope.setMessage = function(msg, msgType) {
+      $scope.message = msg;
+      $scope.messageType = msgType;
+    }
+
+
    $scope.limit = 30;
    $scope.offset = 0;
    $scope.sequence = 0;
