@@ -13,6 +13,8 @@
   {:name :name
    :erTag :referral/er-tag
    :eeTag :referral/ee-tag
+   :erQuiet :referral/er-quiet?
+   :eeQuiet :referral/ee-quiet?
    :note :note
    :who :who})
 
@@ -22,6 +24,8 @@
 (def valid-keys
   [:erTag
    :eeTag
+   :erQuiet
+   :eeQuiet
    :note
    :who])
 
@@ -48,10 +52,12 @@
    :erName (:name (first (:person/_cchannels (:referral/er-cchannel entity))) )
    :erCChan (:db/id (:referral/er-cchannel entity)) 
    :erCChanName (:name (:referral/er-cchannel entity)) 
+   :erQuiet (:referral/er-quiet? entity)
    :ee  (:db/id (first (:person/_cchannels (:referral/ee-cchannel entity))))   
    :eeName (:name (first (:person/_cchannels (:referral/ee-cchannel entity))) )
    :eeCChan (:db/id (:referral/ee-cchannel entity)) 
    :eeCChanName (:name (:referral/ee-cchannel entity)) 
+   :eeQuiet (:referral/ee-quiet? entity)
    :owner (:db/id (:referral/owner entity ))
    :ownerName (:name (:referral/owner entity))
    :status (rfr-status-to-label (:referral/status entity)) 
@@ -65,6 +71,8 @@
           who (:who rfr)
           rfr* (dissoc rfr :who :referral/er-tag :referral/ee-tag)
           status (get label-to-rfr-status (:referral/status rfr) :referral.status/new)
+          ee-cchan-q (get rfr :referral/ee-quiet? false)
+          er-cchan-q (get rfr :referral/er-quiet? false)
           tstamp (java.util.Date.)
           tail (rest tran)]
       (handler (vec (flatten (conj [(merge rfr* {:name (str (utils/searchable (:referral/er-tag rfr)) " refers " (utils/searchable (:referral/ee-tag rfr))) 
@@ -73,6 +81,8 @@
                                                  :updated-by who 
                                                  :created tstamp
                                                  :updated tstamp
+                                                 :referral/ee-quiet? ee-cchan-q  
+                                                 :referral/er-quiet? er-cchan-q 
                                                  :type :type/referral})] tail)))))))
 
 (defn add-note [handler]
@@ -155,11 +165,33 @@
        rfr))))
 
 (defn- action-set-owner [entity]
-  {:name "set owner" 
+  {:name "status" 
    :title "Set Owner"
    :method "POST"
    :href (core/ent->href entity)
-   :fields [{:name :owner :type "text" :value "true" }]})
+   :fields [{:name :status :type "hidden" :value :owned }
+            {:name :owner :type "hidden" :value (:who entity)}]})
+
+(defn- action-set-scheduled [entity]
+  {:name "set scheduled" 
+   :title "Set Scheduled"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :status :type "hidden" :value :scheduled }]})
+
+(defn- action-set-in [entity]
+  {:name "set in" 
+   :title "Set In"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :status :type "hidden" :value :in }]})
+
+(defn- action-set-completed [entity]
+  {:name "set completed " 
+   :title "Set Completed"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :status :type "hidden" :value :completed }]})
 
 (defn- action-set-ee-cchan [entity]
   {:name "set eeCChan" 
@@ -180,54 +212,56 @@
    :title "Set EE Quiet"
    :method "POST"
    :href (core/ent->href entity)
-   :fields [{:name :eeQuiet :type "text" :value "true" }]})
+   :fields [{:name :eeQuiet :type "hidden" :value "true" }]})
 
 (defn- action-set-ee-loud [entity]
   {:name "set EE loud" 
    :title "Set EE Loud"
    :method "POST"
    :href (core/ent->href entity)
-   :fields [{:name :eeLoud :type "text" :value "true" }]})
+   :fields [{:name :eeQuiet :type "hidden" :value "false" }]})
 
 (defn- action-set-er-quiet [entity]
   {:name "set ER quiet " 
    :title "Set ER Quiet"
    :method "POST"
    :href (core/ent->href entity)
-   :fields [{:name :erQuiet :type "text" :value "true" }]})
+   :fields [{:name :erQuiet :type "hidden" :value "true" }]})
 
 (defn- action-set-er-loud [entity]
   {:name "set ER loud " 
    :title "Set ER Loud"
    :method "POST"
    :href (core/ent->href entity)
-   :fields [{:name :erLoud :type "text" :value "true" }]})
+   :fields [{:name :erQuiet :type "hidden" :value "false" }]})
 
 (defn- action-cancel [entity]
   {:name "cancel" 
    :title "Cancel Referral"
    :method "POST"
    :href (core/ent->href entity)
-   :fields [{:name :status :type "text" :value "cancel"}]})
+   :fields [{:name :status :type "hidden" :value :cancel}]})
 
 (defn toggle-ee-loud [entity]
   (if (:referral/ee-quiet? entity)
+    (action-set-ee-loud entity)
     (action-set-ee-quiet entity)
-    (action-set-ee-loud entity)))
+    ))
 
 (defn toggle-er-loud [entity]
   (if (:referral/er-quiet? entity)
+    (action-set-er-loud entity)
     (action-set-er-quiet entity)
-    (action-set-er-loud entity)))
+    ))
 
 (defn ref-actions [entity]
   (case (:referral/status entity)
     :referral.status/new [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
-    :referral.status/owned [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
-    :referral.status/scheduled [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
-    :referral.status/in [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
-    :referral.status/completed [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
-    :referral.status/other [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]))
+    :referral.status/owned [(action-set-scheduled entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
+    :referral.status/scheduled [(action-set-in entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
+    :referral.status/in [(action-set-completed entity) (toggle-er-loud entity) (toggle-ee-loud entity)]
+    :referral.status/completed [(toggle-er-loud entity) (toggle-ee-loud entity)]
+    :referral.status/other [(toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]))
 
 (defn gen-response [handler]
   (fn [params]
@@ -240,7 +274,7 @@
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body (json/encode {:class [ "referral" ]
-                           :properties (core/base-prop entity :referral/status rfr-status-to-label) 
+                           :properties (assoc (core/base-prop entity :referral/status rfr-status-to-label) :erQuiet (:referral/er-quiet? entity) :eeQuiet (:referral/ee-quiet? entity))  
                            :actions [ (ref-actions entity)]
                            :entities [ {:class ["er"]
                                         :properties (core/base-prop er :person/type per/person-type-to-label)
@@ -263,11 +297,50 @@
       (gen-response)))
 
 
+(defn rename [handler km]
+  (fn [tran]
+    (let [m (first tran)
+          tail (rest tran)
+          m* (clojure.set/rename-keys m km)]
+      (if tail 
+        (handler [m* tail]) 
+        (handler [m*])))))
+
+(defn transform [k v km]
+  (println "transform k:" k " v:" v " km:" km)
+  (if-let [target (get km k)]
+    (case target
+      "long" (Long/parseLong v)
+      "int" (Integer/parseInt v)
+      "status-label" (label-to-rfr-status v)
+      "bool" (Boolean/parseBoolean v)
+      v)
+    v))
+
+
+(def coerce-map 
+  {:db/id "long"
+   ;:who "long"
+   :referral/owner "long"
+   :referral/ee-quiet? "bool"
+   :referral/er-quiet? "bool"
+   :referral/status "status-label"
+   :id "long"
+  })
+
+(defn coerce [handler km]
+  (fn [tran]
+    (let [m (first tran)
+          tail (rest tran)
+          m* (into {} (for [[k v] m] [k (transform k v km)])) ]
+      (println "coerce m:" m*)
+      (if tail 
+        (handler [m* tail]) 
+        (handler [m*])))))
+
 (defn update [handler]
   (fn [tran]
     (let [m (first tran)
-          id (Long/parseLong (:id m))
           owner (:who m)
-] 
-;[tran (clojure.set/rename-keys (dissoc (first params) :owner) {:id :db/id :who :referral/owner}) ]
-      (handler [{:db/id id :referral/owner owner :referral/status :referral.status/owned :updated (java.util.Date.) :updated-by (:who m)   }]))))
+          m* (dissoc m :who) ] 
+      (handler [ (merge m* {:updated (java.util.Date.) :updated-by (:who m)}) ]))))

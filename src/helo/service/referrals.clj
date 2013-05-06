@@ -24,6 +24,9 @@
 (def update-referral
   (-> (dc/post)
       (rfr/update)
+      (rfr/coerce rfr/coerce-map)
+      (rfr/rename {:id :db/id :status :referral/status :owner :referral/owner
+                   :eeQuiet :referral/ee-quiet? :erQuiet :referral/er-quiet?})
       (dc/remove-empty-keys)))
 
 (defn post-referrals [{params :params}]

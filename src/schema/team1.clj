@@ -362,6 +362,13 @@
   }
   
   {:db/id #db/id[:db.part/db]
+   :db/ident :cchannel/quiet?
+   :db/valueType :db.type/boolean
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
    :db/ident :cchannel/route
    :db/valueType :db.type/ref
    :db/cardinality :db.cardinality/many
