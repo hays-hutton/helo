@@ -3,40 +3,54 @@
 <div helo-msg></div>
 
 <div class="row">
-  <div class="columns large-12">
-    <span class="address hide-for-small">
-      <h6>Actions:</h6>
-      <button ng-repeat="action in actions" class="small" ng-click="doAction(action)">{{action.name}}</button>
-    </span>
-    <div class="show-for-small">
-      <h6>Actions:</h6>
-      <button ng-repeat="action in actions" class="small expand" ng-click="doAction(action)">{{action.name}}</button>
+  <div class="columns large-3">
+    <h6>Actions:</h6>
+    <div ng-repeat="action in actions">
+      <form>
+        <button class="small expand bottom" ng-click="doAction(action)">{{action.title}}</button>
+        <div ng-repeat="field in action.fields">
+          <input type="{{field.type}}" name="{{field.name}}" value="{{field.value}}"/>
+        </div>
+      </form>
     </div>
   </div>
-</div>
-<div class="row">
- <div class="columns large-4">
-    <h6><small>referr</small>ER</h6>
-    <div ng-show="er"><a ng-href="/#{{er.href}}">{{er.properties.name}}<span ng-show="er.properties.subType"> -- {{er.properties.subType}}</span></a></div>
-    <div ng-show="erCChan"><a ng-href="/#{{erCChan.href}}">{{erCChan.properties.name}}</a></div>
+  <div class="columns large-9">
+    <div class="row">
+      <div class="columns large-4">
+        <h6><small>referr</small>ER</h6>
+        <div ng-show="er"><a ng-href="/#{{er.href}}">{{er.properties.name}}<span ng-show="er.properties.subType"> -- {{er.properties.subType}}</span></a></div>
+        <div ng-show="erCChan"><a ng-href="/#{{erCChan.href}}">{{erCChan.properties.name}}</a></div>
+        <div>
+          <small ng-show="properties.erQuiet">quiet</small>
+          <small ng-hide="properties.erQuiet">LOUD</small>
+        </div>
+      </div>
+      <div class="columns large-4">
+        <h6><small>referr</small>EE</h6>
+        <div ng-show="ee"><a ng-href="/#{{ee.href}}">{{ee.properties.name}}<span ng-show="ee.properties.subType"> -- {{ee.properties.subType}}</span></a></div>
+        <div ng-show="eeCChan"><a ng-href="/#{{eeCChan.href}}">{{eeCChan.properties.name}}</a></div>
+        <div>
+          <small ng-show="properties.eeQuiet">quiet</small>
+          <small ng-hide="properties.eeQuiet">LOUD</small>
+        </div>
+      </div>
+      <div class="columns large-4">
+        <h6>Owner</h6>
+        <div ng-show="owner"><a ng-href="{{owner.href}}">{{owner.properties.name}}</a></div>
+      </div>
+    </div>
+    <div class="row">
+      <hr/>
+      <div class="columns large-4">
+        <h6>Details</h6>
+        <div><small>Status:</small></div>
+        <div>{{properties.subType}}</div>
+        <div><small>Create:</small></div>
+        <div>{{properties.created | date: 'medium'}}</div>
+        <div><small>Update:</small></div>
+        <div>{{properties.updated | date: 'medium'}}</div>
+      </div>
+      <div class="columns large-8" helo-notes></div>
+    </div>
   </div>
-  <div class="columns large-4">
-    <h6><small>referr</small>EE</h6>
-    <div ng-show="ee"><a ng-href="/#{{ee.href}}">{{ee.properties.name}}<span ng-show="ee.properties.subType"> -- {{ee.properties.subType}}</span></a></div>
-    <div ng-show="eeCChan"><a ng-href="/#{{eeCChan.href}}">{{eeCChan.properties.name}}</a></div>
-  </div>
-  <div class="columns large-4">
-    <h6>Owner</h6>
-    <div ng-show="owner"><a ng-href="{{owner.href}}">{{owner.properties.name}}</a></div>
-  </div>
-</div>
-
-<div class="row">
-  <div class="columns large-6">
-    <h6>Details</h6>
-    <div><small>Status:</small> {{properties.subType}}</div>
-    <div><small>Create:</small> {{properties.created | date: 'medium'}}</div>
-    <div><small>Update:</small> {{properties.updated | date: 'medium'}}</div>
-  </div>
-  <div class="columns large-6" helo-notes></div>
 </div>
