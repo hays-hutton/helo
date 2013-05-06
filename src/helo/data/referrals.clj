@@ -40,7 +40,8 @@
    :referral.status/scheduled "scheduled" 
    :referral.status/in "in" 
    :referral.status/completed "completed" 
-   :referral.status/other "other"})
+   :referral.status/other "other"
+   :referral.status/cancelled "cancelled" })
 
 (def label-to-rfr-status
   (zipmap (vals rfr-status-to-label) (keys rfr-status-to-label)))
@@ -193,6 +194,20 @@
    :href (core/ent->href entity)
    :fields [{:name :status :type "hidden" :value :completed }]})
 
+(defn- action-set-cancelled [entity]
+  {:name "set cancelled" 
+   :title "Set Cancelled"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :status :type "hidden" :value :cancelled }]})
+
+(defn- action-set-other [entity]
+  {:name "set other" 
+   :title "Set Other"
+   :method "POST"
+   :href (core/ent->href entity)
+   :fields [{:name :status :type "hidden" :value :other }]})
+
 (defn- action-set-ee-cchan [entity]
   {:name "set eeCChan" 
    :title "Set EE CChannel"
@@ -256,12 +271,13 @@
 
 (defn ref-actions [entity]
   (case (:referral/status entity)
-    :referral.status/new [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
-    :referral.status/owned [(action-set-scheduled entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-cancel entity)]
-    :referral.status/scheduled [(action-set-in entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]
+    :referral.status/new [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-set-cancelled entity)]
+    :referral.status/owned [(action-set-scheduled entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-set-cancelled entity)]
+    :referral.status/scheduled [(action-set-in entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-set-cancelled entity)]
     :referral.status/in [(action-set-completed entity) (toggle-er-loud entity) (toggle-ee-loud entity)]
     :referral.status/completed [(toggle-er-loud entity) (toggle-ee-loud entity)]
-    :referral.status/other [(toggle-er-loud entity) (toggle-ee-loud entity)(action-cancel entity)]))
+    :referral.status/other [(toggle-er-loud entity) (toggle-ee-loud entity)(action-set-cancelled entity)]
+    :referral.status/cancelled [(action-set-other entity)]))
 
 (defn gen-response [handler]
   (fn [params]
