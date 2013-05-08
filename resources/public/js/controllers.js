@@ -54,8 +54,6 @@ function OrgCtrl($scope, $routeParams, $http) {
 }
 
 function OrgsCtrl($scope, $http, $location) {
-  $scope.offset = "0";
-  $scope.limit = "30";
   $scope.message = "";
   $scope.messageType = "";
   $scope.resetMessage = function() {
@@ -67,58 +65,6 @@ function OrgsCtrl($scope, $http, $location) {
     $scope.messageType = msgType;
   }
   
-  $scope.setSelected = function(name) {
-    $scope.selected = name;
-    $scope.getOrgs();
-  }
-
-  $scope.getShow = function(name) {
-    if(name === $scope.selected) {
-      return "selected";
-    } else {
-      return "";
-    }
-  }
-  
-  $scope.orgTypes = [{'label': 'Insuror', 'value': 'insuror'},
-                     {'label': 'Agency', 'value': 'agency'},
-                     {'label': 'Vendor', 'value': 'vendor'},
-                     {'label': 'Partner', 'value': 'partner'},
-                     {'label': 'Client', 'value': 'client'}];
-
-  $scope.getOrgs = function() {
-    $http.get('/orgs', {params: {'limit':  $scope.limit,
-                                 'offset': $scope.offset}
-                       }).success(
-                           function(data) {
-                             $scope.orgs = data.results;
-                             }).error(
-                               function(data) {
-                               $scope.message = data.message;
-                               $scope.messageType = 'alert';
-                               });
-  }
-
-
-  $scope.getOrgsList = function() {
-    $http.get('/search/orgs-list', {params: {'q': $scope.orgsFilter + '*'}}).success(
-                           function(data) {
-                             $scope.orgs = data;
-                             }).error(
-                               function(data) {
-                               $scope.message = data.message;
-                               $scope.messageType = 'alert';
-                               });
-  }
-
-  $scope.$watch('orgsFilter', function(newV,oldV,scope) {
-     if(newV == '') {
-       $scope.getOrgs();
-     } else {
-       $scope.getOrgsList();
-     }
-  });
-
   $scope.addOrg = function() {
     if(! $scope.acctMgr) {
       console.log("setting it");
@@ -148,31 +94,13 @@ function OrgsCtrl($scope, $http, $location) {
                          "acctMgr": $scope.acctMgr.id,
                          "note": $scope.note}).success(
                       function(data) {
-                        $scope.message = data.message;
-                        $scope.messageType = 'success';
                         $location.path('/');
-                        //$scope.resetAddOrg();
-                        //$scope.setSelected('all');
                       }).error(
                         function(data) {
                           $scope.message = data.message;
                           $scope.messageType = 'alert';
                         });
   }
-
-  $scope.resetAddOrg = function() {
-    $scope.name = "";
-    $scope.address = "";
-    $scope.email = "";
-    $scope.work = "";
-    $scope.fax = "";
-    $scope.orgType = "";
-    $scope.pid = "";
-    $scope.acctMgr = "";
-    $scope.note = "";
-  }
-
-  $scope.setSelected('all');
 
   $scope.org = '';
   $scope.parentOrgOpts = {
@@ -379,51 +307,8 @@ function PeopleCtrl($scope, $http) {
     $scope.messageType = msgType;
   }
 
-  $scope.perTypes = [{'label': 'Team Member', 'value': 'team'},
-                     {'label': 'CSR', 'value': 'csr'},
-                     {'label': 'Agent', 'value': 'agent'},
-                     {'label': 'Producer', 'value': 'producer'},
-                     {'label': 'Adjuster', 'value': 'adjuster'},
-                     {'label': 'Claims', 'value': 'claims'},
-                     {'label': 'Client', 'value': 'client'},
-                     {'label': 'Vendor', 'value': 'vendor'}];
-
-  $scope.setSelected = function(name) {
-    $scope.selected = name;
-    $scope.getPersons();
-  }
-
-  $scope.getShow = function(name) {
-    if(name === $scope.selected) {
-      return "selected";
-    } else {
-      return "";
-    }
-  }
-
-  $scope.resetAddPerson = function() {
-    $scope.firstName = "";
-    $scope.lastName = "";
-    $scope.address = "";
-    $scope.cell = "";
-    $scope.work = "";
-    $scope.home = "";
-    $scope.fax = "";
-    $scope.note = "";
-  }
-
-  $scope.getPersons = function() {
-    $http.get('/persons' ).success( function(data) {
-        $scope.count = data.count;
-        $scope.list = data.results;
-        }).error(function(data) {
-          $scope.setMessage(data);
-          });
-  }
-
   $scope.addPerson = function() {
     if(! $scope.org) {
-      console.log("setting it");
       $scope.org = {id: ''};
     } else {
       if(! $scope.org.id) {
@@ -443,18 +328,13 @@ function PeopleCtrl($scope, $http) {
                             "personType": $scope.personType,
                             "note": $scope.note}).success(
                       function(data) {
-                        $scope.message = data.message;
-                        $scope.messageType = 'success';
-                        $scope.resetAddPerson();
-                        $scope.setSelected('all');
+                        $location.path('/');
                       }).error(
                         function(data) {
                           $scope.message = data.message;
                           $scope.messageType = 'alert';
-                        });
+                      });
   }
-
-  $scope.setSelected('all');
 
   $scope.parentOrg = '';
 
