@@ -169,6 +169,7 @@
   (GET "/images/t1-logo.jpg" [] (resp/file-response "images/t1-logo.jpg" {:root "resources/public"}))
   (GET "/css/foundation.css" [] (resp/file-response "css/foundation.css" {:root "resources/public"}))
   (GET "/css/helo.css" [] (resp/file-response "css/helo.css" {:root "resources/public"}))
+  (GET "/favicon.ico" [] (resp/file-response "favicon.ico" {:root "resources/public"}))
   (wrap-auth team-read-routes #{:role.person/team-member})
   (wrap-auth team-write-routes #{:role.person/team-member})
   (POST "/request-pin" [cell]  (request-pin cell))
