@@ -145,7 +145,7 @@
   (GET "/orgs/:id" [id] (org/get-org id))
   (GET "/persons" request (per/get-persons request))
   (GET "/persons/:id" [id] (per/get-person id))
-  (GET "/referrals/:id" [id] (rfr/get-referral id))
+  (GET "/referrals/:id" request (rfr/get-referral request))
   (GET "/notes" request (nte/get-notes request))
 ;  (GET "/notes/:id" request  (nte/get-note request))
 )

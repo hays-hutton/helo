@@ -1,1 +1,49 @@
-<h3>Referrals</h3>
+<div class="alert-box" ng-class="messageType" ng-show="messageType">
+  {{message}}
+  <a ng-click="resetMessage()" class="close">&times;</a>
+</div>
+
+<form>
+  <fieldset>
+    <legend>Add Referral</legend>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <label><small>referr</small>ER</label>
+        <input type="text" ng-model="erTag" placeholder="cell or email"/>
+      </div>
+      <div class="large-1 columns">
+        <label><small>ER Quiet?</small></label>
+        <input type="checkbox" ng-model="erQuiet"/>
+      </div>
+      <div class="large-5 columns">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-6 columns">
+        <label><small>referr</small>EE</label>
+        <input type="text" ng-model="eeTag" placeholder="cell or email"/>
+      </div>
+      <div class="large-1 columns">
+        <label><small>EE Quiet?</small></label>
+        <input type="checkbox" ng-model="eeQuiet"/>
+      </div>
+      <div class="large-5 columns">
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <label>Note</label>
+        <textarea ng-model="note"></textarea>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="large-12 columns">
+        <button class="small" ng-click="addReferral()">Add Referral</button>
+      </div>
+    </div>
+  </fieldset>
+</form>

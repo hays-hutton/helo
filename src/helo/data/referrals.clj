@@ -15,6 +15,7 @@
    :eeTag :referral/ee-tag
    :erQuiet :referral/er-quiet?
    :eeQuiet :referral/ee-quiet?
+   :owner :referral/owner
    :note :note
    :who :who})
 
@@ -26,6 +27,7 @@
    :eeTag
    :erQuiet
    :eeQuiet
+   :owner
    :note
    :who])
 
@@ -158,20 +160,21 @@
       })))
 
 (defn referral-query []
-  (fn [id]
+  (fn [params]
+    (println "params for:" params)
     (let [dbval (db core/conn)
-          rid (Long/parseLong id)
+          rid (Long/parseLong (:id params))
           rfr (d/entity dbval rid)]
      (if (= :type/referral (:type rfr))
        rfr))))
 
-(defn- action-set-owner [entity]
+(defn- action-set-owner [entity who]
   {:name "status" 
    :title "Set Owner"
    :method "POST"
    :href (core/ent->href entity)
    :fields [{:name :status :type "hidden" :value :owned }
-            {:name :owner :type "hidden" :value (:who entity)}]})
+            {:name :owner :type "hidden" :value who}]})
 
 (defn- action-set-scheduled [entity]
   {:name "set scheduled" 
@@ -269,9 +272,9 @@
     (action-set-er-quiet entity)
     ))
 
-(defn ref-actions [entity]
+(defn ref-actions [entity who]
   (case (:referral/status entity)
-    :referral.status/new [(action-set-owner entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-set-cancelled entity)]
+    :referral.status/new [(action-set-owner entity who) (toggle-er-loud entity) (toggle-ee-loud entity) (action-set-cancelled entity)]
     :referral.status/owned [(action-set-scheduled entity) (toggle-er-loud entity) (toggle-ee-loud entity) (action-set-cancelled entity)]
     :referral.status/scheduled [(action-set-in entity) (toggle-er-loud entity) (toggle-ee-loud entity)(action-set-cancelled entity)]
     :referral.status/in [(action-set-completed entity) (toggle-er-loud entity) (toggle-ee-loud entity)]
@@ -286,12 +289,14 @@
           er-cchan (:referral/er-cchannel entity)
           ee (first (:person/_cchannels (:referral/ee-cchannel entity)))
           ee-cchan (:referral/ee-cchannel entity)
+          who (:who params)
           owner (:referral/owner entity) ]
+      (println "gen-response entity:" entity)
       {:status 200
        :headers {"Content-Type" "application/json"}
        :body (json/encode {:class [ "referral" ]
                            :properties (assoc (core/base-prop entity :referral/status rfr-status-to-label) :erQuiet (:referral/er-quiet? entity) :eeQuiet (:referral/ee-quiet? entity))  
-                           :actions [ (ref-actions entity)]
+                           :actions [ (ref-actions entity who)]
                            :entities [ {:class ["er"]
                                         :properties (core/base-prop er :person/type per/person-type-to-label)
                                         :href (core/ent->href er)}
@@ -326,8 +331,8 @@
   (println "transform k:" k " v:" v " km:" km)
   (if-let [target (get km k)]
     (case target
-      "long" (Long/parseLong v)
-      "int" (Integer/parseInt v)
+      "long" (if (number? v) v (Long/parseLong v)) 
+      "int" (if (number? v) v (Integer/parseInt v)) 
       "status-label" (label-to-rfr-status v)
       "bool" (Boolean/parseBoolean v)
       v)
@@ -346,10 +351,10 @@
 
 (defn coerce [handler km]
   (fn [tran]
+    (println "coerce tran:" tran)
     (let [m (first tran)
           tail (rest tran)
           m* (into {} (for [[k v] m] [k (transform k v km)])) ]
-      (println "coerce m:" m*)
       (if tail 
         (handler [m* tail]) 
         (handler [m*])))))

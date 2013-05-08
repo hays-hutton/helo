@@ -5,9 +5,9 @@
             [cheshire.core :as json]
   ))
 
-(defn get-referral [id] (rfr/read-referral id))
+;(defn get-referral [id] (rfr/read-referral id))
 
-(defn get-referrals [{params :params}] (println params))
+(defn get-referral [{params :params}] (rfr/read-referral params))
 
 (def create-referral
   (-> (dc/post)

@@ -264,7 +264,7 @@ function HomeCtrl($scope, $http) {
          return 'icon-office';
          break;
        case 'person':
-         return 'icon-user';
+         return 'icon-user-3';
          break;
        case 'cchannel':
          switch(entitySubType) {
@@ -297,7 +297,25 @@ function HomeCtrl($scope, $http) {
    }
 }
 
-function ReferralsCtrl($scope) { }
+function ReferralsCtrl($scope,$http,$location) {
+  $scope.erLoud = true;
+  $scope.eeLoud = true;
+
+  $scope.addReferral = function() {
+    $http.post('/referrals', {"erTag": $scope.erTag,
+                              "eeTag": $scope.eeTag,
+                              "erQuiet": $scope.erQuiet,
+                              "eeQuiet": $scope.eeQuiet,
+                              "note" : $scope.note}).success(function(data) {
+                                $location.path("/");
+           }).error(function(data) {
+                                $scope.message = data.message;
+                                $scope.messageType = 'alert';
+
+    });
+  }
+}
+
 function ReferralCtrl($scope, $routeParams, $route,  $http) {
   $scope.id = $routeParams.id;
   $http.get('/referrals/' + $scope.id).success(function(data) {
