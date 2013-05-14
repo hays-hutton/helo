@@ -2,6 +2,7 @@
   (:require [helo.service.core :as core]
             [helo.data.core :as dc]
             [helo.data.referrals :as rfr]
+            [helo.service.mq :as mq]
             [cheshire.core :as json]
   ))
 
@@ -9,8 +10,29 @@
 
 (defn get-referral [{params :params}] (rfr/read-referral params))
 
+(defn creation-response [handler]
+  (fn [params]
+    (let [response (handler params)
+          entid (:created-id response) ]
+      (println "Created Referral: " entid)
+      ;TODO try catch? what happens on error???
+      (mq/trigger  {:event-type :referral/create :event-entity entid })
+      
+      {:status 200 :body (json/encode {:id entid :message (str "Created Referral: " entid )} )})))
+
+(defn update-response [handler]
+  (fn [params]
+    (let [response (handler params)
+          entid (:updated-id response)
+          payload (first (:tran response))]
+      (println "Update Referral Response: " response)
+      ;TODO try catch? what happens on error???
+      (mq/trigger  {:event-type :referral/update :event-entity entid :payload payload })
+      {:status 200 :body (json/encode {:id entid :message (str "Updated Referral: " entid )} )})))
+
 (def create-referral
   (-> (dc/post)
+      (creation-response)
       (rfr/add-defaults)
       (rfr/add-cchan :referral/er-tag :referral/er-cchannel :cchannel.type/unknown )
       (rfr/add-cchan :referral/ee-tag :referral/ee-cchannel :cchannel.type/unknown)
@@ -22,7 +44,8 @@
       (dc/remove-empty-keys)))
 
 (def update-referral
-  (-> (dc/post)
+  (-> (dc/update-post)
+      (update-response)
       (rfr/update)
       (rfr/coerce rfr/coerce-map)
       (rfr/rename {:id :db/id :status :referral/status :owner :referral/owner

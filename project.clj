@@ -17,6 +17,7 @@
                  [geocoder-clj "0.1.1"]
                  [org.apache.httpcomponents/httpclient "4.2.2"]
                  [com.draines/postal "1.9.0"]
+                 [com.cemerick/bandalore "0.0.3"]
                  [org.antlr/stringtemplate "3.2"]]
   :plugins [[lein-ring "0.8.3"]]
   :ring {:handler helo.handler/app}

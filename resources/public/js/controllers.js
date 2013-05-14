@@ -245,6 +245,19 @@ function ReferralsCtrl($scope,$http,$location) {
 }
 
 function ReferralCtrl($scope, $routeParams, $route,  $http) {
+  $scope.message = "";
+  $scope.messageType = "";
+  $scope.resetMessage = function() {
+    $scope.message = "";
+    $scope.messageType = "";
+  }
+  $scope.setMessage = function(msg, msgType) {
+    $scope.message = msg;
+    $scope.messageType = msgType;
+  }
+
+
+
   $scope.id = $routeParams.id;
   $http.get('/referrals/' + $scope.id).success(function(data) {
       $scope.properties = data.properties;
@@ -485,6 +498,59 @@ function NotesCtrl($scope, $http) {
 
   $scope.getNotes();
 }
+function EventsCtrl($scope, $http) {
+  $scope.evt = '';
+  $scope.evts = [];
+  $scope.offset = 0;
+  $scope.limit = 100;
+  $scope.count = 0;
+
+  $scope.getEvents = function() {
+    $http.get('/events', {params: {'parent': $scope.id,
+                                  'offset': $scope.offset,
+                                   'limit': $scope.limit}}).success(
+                           function(data) {
+                             $scope.evts = data.results;
+                             $scope.offset = data.offset;
+                             $scope.limit = data.limit;
+                             $scope.count = data.count;
+                             }).error(
+                               function(data) {
+                               $scope.message = data.message;
+                               $scope.messageType = 'alert';
+                               });
+  }
+
+  $scope.more = function() {
+    // TODO verify '+' needed
+    if(+$scope.count > $scope.offset) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  $scope.appendMore = function() {
+    var rOffset = $scope.offset + $scope.limit;
+    //TODO verify '+' needed
+    if(+$scope.count > $scope.offset) {
+      $http.get('/events', {params: {'parent': $scope.id,
+                                    'offset': rOffset, 
+                                    'limit': $scope.limit}}).success(
+                                      function(data) {
+                                        $scope.evts = $scope.evts.concat(data.results);
+                                        $scope.offset = data.offset;
+                                        }).error(
+                                          function(data) {
+                                            $scope.message = data.message;
+                                            $scope.messageType = 'alert';
+                                            });
+    }
+  }
+
+  $scope.getEvents();
+}
+
 
 function NoteCtrl($scope) { }
 function AgenciesCtrl($scope) { }

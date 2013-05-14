@@ -155,5 +155,13 @@ angular.module('helo.directives', [])
       link: function postLink(scope, iElem, iAttrs, control) {
       }
     };
+  }).directive('heloEvents', function($parse) {
+    return {
+      templateUrl: 'partials/evt.html',
+      replace: true,
+      link: function postLink(scope, iElem, iAttrs, control) {
+      
+      }
+    };
   })
 ;

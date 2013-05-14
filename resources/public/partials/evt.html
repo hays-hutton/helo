@@ -1,0 +1,10 @@
+<div ng-controller="EventsCtrl">
+  <h6>Events</h6>
+    <div ng-repeat="evt in evts" >
+      <div> {{evt.at | date: 'short'}}</div>
+      <div class="panel">
+        {{evt.description}} by <a ng-href="#/persons/{{evt.byId}}">{{evt.byName}}</a>  
+      </div>
+    </div>
+</div>
+

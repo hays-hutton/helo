@@ -170,7 +170,7 @@
 
 (defn- action-set-owner [entity who]
   {:name "status" 
-   :title "Set Owner"
+   :title "Own It"
    :method "POST"
    :href (core/ent->href entity)
    :fields [{:name :status :type "hidden" :value :owned }
@@ -199,7 +199,7 @@
 
 (defn- action-set-cancelled [entity]
   {:name "set cancelled" 
-   :title "Set Cancelled"
+   :title "Cancel It"
    :method "POST"
    :href (core/ent->href entity)
    :fields [{:name :status :type "hidden" :value :cancelled }]})

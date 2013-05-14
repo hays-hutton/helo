@@ -10,6 +10,7 @@
             [helo.service.entities :as ent]
             [helo.service.search :as search]
             [helo.service.notes :as nte]
+            [helo.service.events :as evt]
             [helo.service.persons :as per]
             [helo.service.referrals :as rfr]
             [cheshire.core :as json]
@@ -147,6 +148,7 @@
   (GET "/persons/:id" [id] (per/get-person id))
   (GET "/referrals/:id" request (rfr/get-referral request))
   (GET "/notes" request (nte/get-notes request))
+  (GET "/events" request (evt/get-events request))
 ;  (GET "/notes/:id" request  (nte/get-note request))
 )
 

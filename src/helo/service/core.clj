@@ -12,6 +12,9 @@
 (def smtp-pwd "Ar1RaN3FW8P0BD641BOPnKth5f2SqIKrNIDNZAaN+KvB")
 (def smtp-server "email-smtp.us-east-1.amazonaws.com" )
 
+(def aws-id "0X2SZ4W2MJYA3SY0EQR2")
+(def aws-key "TvtxznmJtaUx1bB8XbUxWlLQYN0ZwddPfTam7TcY")
+
 (def acct-sid "ACb34a5bb9ec10b33e26ced611f9210b6d")
 (def auth-tkn "f8a883669ea3447ecc9ed2750ff888e8")
 (def phone-from "+19012354363")

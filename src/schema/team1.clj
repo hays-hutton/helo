@@ -519,5 +519,49 @@
    :db.install/_attribute :db.part/db
   }
 
+  {:db/id #db/id[:db.part/db]
+   :db/ident :event/description
+   :db/valueType :db.type/string
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :event/parent
+   :db/valueType :db.type/ref
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :event/by
+   :db/valueType :db.type/ref
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :event/at
+   :db/valueType :db.type/instant
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  {:db/id #db/id[:db.part/db]
+   :db/ident :event/type
+   :db/valueType :db.type/ref
+   :db/cardinality :db.cardinality/one
+   :db.install/_attribute :db.part/db
+  }
+
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-new]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-owned]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-scheduled]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-in]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-completed]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-cancelled]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-status-other]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-er-quiet]
+  [:db/add #db/id[:db.part/user] :db/ident :event.type/referral-ee-quiet]
 
 ]

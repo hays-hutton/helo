@@ -102,9 +102,27 @@
   (fn [tran]
     (println "post:" tran)
     (try 
-      @(d/transact conn tran)
-      (println "The record: " tran)
-      {:status 200 :body (json/encode {:message (str "Created: " (:type (first tran)) " ->" (:name (first tran)) )} )}
+      (let [tempid (:db/id (first tran)) 
+            response @(d/transact conn tran)
+            entid (d/resolve-tempid (:db-after response) (:tempids response) tempid)]
+        {:tran tran
+         :created-id entid
+         :response response}
+      )
+ ;     {:status 200 :body (json/encode {:message (str "Created: " (:type (first tran)) " ->" (:name (first tran)) )} )}
+      (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))
+
+(defn update-post []
+  (fn [tran]
+    (println "update-post:" tran)
+    (try 
+      (let [entid (:db/id (first tran)) 
+            response @(d/transact conn tran) ]
+        {:tran tran
+         :updated-id entid
+         :response response}
+      )
+ ;     {:status 200 :body (json/encode {:message (str "Created: " (:type (first tran)) " ->" (:name (first tran)) )} )}
       (catch Exception e {:status 500 :body (json/encode {:message (str e)})}))))
 
 
