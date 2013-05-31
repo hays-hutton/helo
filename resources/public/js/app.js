@@ -18,7 +18,7 @@ var helo = angular.module('helo', ['helo.services','helo.directives','helo.filte
     $routeProvider.when('/orgs/:id', {templateUrl: 'partials/org.html', controller: OrgCtrl});
     $routeProvider.when('/entities', {templateUrl: 'partials/entity.html', controller: EntityCtrl});
     $routeProvider.when('/', {templateUrl: 'partials/home.html', controller: HomeCtrl});
-    $routeProvider.otherwise({redirectTo: '/'});
+    $routeProvider.otherwise({redirectTo: '/app.html'});
   }]);
 
 helo.value('ui.config', {

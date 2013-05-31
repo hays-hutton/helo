@@ -1,6 +1,7 @@
 (ns helo.handler
   (:use compojure.core)
   (:use ring.adapter.jetty)
+  (:use ring.middleware.reload)
   (:use [clojure.tools.logging :only [debug info error]])
   (:require [compojure.handler :as handler]
             [compojure.route :as route]
@@ -13,9 +14,13 @@
             [helo.service.events :as evt]
             [helo.service.persons :as per]
             [helo.service.referrals :as rfr]
+            [helo.site.template :as site]
             [cheshire.core :as json]
             [clojure.pprint])
-  (:import org.apache.commons.codec.binary.Base64))
+  (:import org.apache.commons.codec.binary.Base64)
+  (:import org.eclipse.jetty.server.nio.SelectChannelConnector)
+
+)
 
 (derive :role.person/partner :role.person/client)
 (derive :role.person/vendor :role.person/client)
@@ -123,6 +128,11 @@
 	    (if (authorized? required-roles phone-roles)
 	      (handler request))))))))
 
+(defn wrap-split-https [safer-handler open-handler]
+  (fn [req]
+    (if (= "https" (get-in req [:headers "x-forwarded-proto"]))
+      (safer-handler req)
+      (open-handler req))))
 
 (defn wrap-who[handler]
   (fn [req]
@@ -164,23 +174,49 @@
 )
 
 
-(defroutes the-routes 
-  (GET "/" [] (resp/file-response "index.html" {:root "resources/public"}))
+(defroutes both-routes
+  (route/resources "/" )
+)
+
+(defroutes https-routes
+  (GET "/" [] {:status 200 :body "Yeeeeellllllllooooo"})
+  (GET "/app.html" [] (resp/file-response "app.html" {:root "resources/public"}))
   (GET "/auth.html" [] (resp/file-response "auth.html" {:root "resources/public"}))
+  (POST "/request-pin" [cell]  (request-pin cell))
+  (POST "/pin" [pin]  (post-pin pin))
+  (wrap-auth team-read-routes #{:role.person/team-member})
+  (wrap-auth team-write-routes #{:role.person/team-member})
+  (route/resources "/" )
+)
+
+(defroutes http-routes 
   (GET "/refer.html" [] (resp/file-response "refer.html" {:root "resources/public"}))
   (GET "/images/t1-logo.jpg" [] (resp/file-response "images/t1-logo.jpg" {:root "resources/public"}))
   (GET "/css/foundation.css" [] (resp/file-response "css/foundation.css" {:root "resources/public"}))
   (GET "/css/helo.css" [] (resp/file-response "css/helo.css" {:root "resources/public"}))
   (GET "/favicon.ico" [] (resp/file-response "favicon.ico" {:root "resources/public"}))
-  (wrap-auth team-read-routes #{:role.person/team-member})
-  (wrap-auth team-write-routes #{:role.person/team-member})
-  (POST "/request-pin" [cell]  (request-pin cell))
-  (POST "/pin" [pin]  (post-pin pin))
+  ;Below should be https????
+  ;Below should be https maybe????
   (POST "/referrals" request  (rfr/post-referrals request))
   (GET "/hello" request (resp/response "hello world"))
+  (GET "/" request (site/index request))
+  (GET "/body-shops-st-louis" request (site/shops-stl request))
+  (GET "/body-shops-little-rock" request (site/shops-lr request))
+
+  (route/resources "/" )
   (route/not-found (resp/file-response "not-found.html" {:root "resources/public"}))
 )
 
+(defn add-connectors [server]
+  (let [conn1  (SelectChannelConnector.) 
+        conn2 (SelectChannelConnector. ) ]
+  (.setPort conn1  8081)
+  (.setPort conn2  8080)
+  (.addConnector server conn1 )
+  (.addConnector server conn2) 
+  server))
+
 (def app
-  (run-jetty (handler/site (wrap-who (wrap-keyword-params (wrap-log (wrap-json-params (spy the-routes "all" ))))) ) { :port 8080 }))
+  (run-jetty (handler/site (wrap-reload (wrap-who (wrap-keyword-params (wrap-log (wrap-json-params (spy (wrap-split-https https-routes http-routes) "all" )))))) 
+                ) {:configurator add-connectors :port 8083}))
 
