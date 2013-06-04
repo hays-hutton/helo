@@ -120,6 +120,11 @@
 
 
 (html/defsnippet shop snips [:div#shop] [])
+(html/defsnippet estimates snips [:div#estimates] [])
+(html/defsnippet repair snips [:div#repair] [])
+(html/defsnippet dents snips [:div#dents] [])
+(html/defsnippet rentals snips [:div#rentals] [])
+(html/defsnippet glass snips [:div#glass] [])
 
 
 (def map-base-url "http://maps.googleapis.com/maps/api/staticmap?")
@@ -162,3 +167,24 @@
   [:div#main] (html/content (shops-snip lr-shops))
 )
 
+
+(html/deftemplate free-estimates layout [ctxt]
+  [:div#main] (html/content (estimates))
+)
+
+(html/deftemplate collision-repair layout [ctxt]
+  [:div#main] (html/content (repair))
+)
+
+(html/deftemplate dent-repair layout [ctxt]
+  [:div#main] (html/content (dents))
+)
+
+
+(html/deftemplate car-rentals layout [ctxt]
+  [:div#main] (html/content (rentals))
+)
+
+(html/deftemplate auto-glass layout [ctxt]
+  [:div#main] (html/content (glass))
+)

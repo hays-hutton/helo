@@ -202,6 +202,11 @@
   (GET "/" request (site/index request))
   (GET "/body-shops-st-louis" request (site/shops-stl request))
   (GET "/body-shops-little-rock" request (site/shops-lr request))
+  (GET "/free-estimates" request (site/free-estimates request))
+  (GET "/collision-repair" request (site/collision-repair request))
+  (GET "/dent-repair" request (site/dent-repair request))
+  (GET "/car-rentals" request (site/car-rentals request))
+  (GET "/auto-glass" request (site/auto-glass request))
 
   (route/resources "/" )
   (route/not-found (resp/file-response "not-found.html" {:root "resources/public"}))
