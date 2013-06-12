@@ -1,45 +1,83 @@
 <html>
   <body>
+    <div id="toYou">
+      <div class="row">
+        <div class="columns large-12">
+          <h3>We Come To You</h3>
+        </div>
+      </div>
+      <div class="row">
+        <div class="columns large-8">
+          <form action="/we-come-to-you" method="POST">
+            <fieldset>
+              <legend>Your Info</legend>
+              <label>Name</label>
+              <p>
+                <input name="name" placeholder="Your Name" type="text"/>
+              </p>
+              <label>Where? <span class="tiny">The address of where you want us to come.</span></label>
+              <p>
+                <input name="where" placeholder="e.g. 1 Government Dr, St Louis, MO" type="text"/>
+              </p>
+            </fieldset>
+            <fieldset>
+              <legend>Contact Info</legend>
+              <label>Email</label>
+              <p>
+                <input name="email" placeholder="Your Email" type="email"/>
+              </p>
+              <p>
+              <bold> -- OR --</bold>
+              </p>
+              <label>Cell</label>
+              <p>
+                <input name="phone" placeholder="Your Phone" type="tel"/>
+              </p>
+            </fieldset>
+            <button type="submit" class="button round success">Submit My Info!</input>
+          </form>
+        </div>
+        <div class="columns large-4">
+          <h6>How does it work?</h6>
+          <ol>
+            <li>Submit the form</li>
+            <li>We will contact you to schedule a time</li>
+            <li>We will come to your place and perform necessary tasks to complete an estimate</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
     <div id="glass">
       <div class="row">
-        <div class="columns large-6">
+        <div class="columns large-5">
           <h1>Auto Glass</h1>
           <a href="tel:18889658326" class="">888.965.8326</a>
-          <p>Call For An Install Appointment!</p>
-          <p>M-F 8AM-5PM</p>
-        </div>
-        <div class="columns large-6">
-          <p>
-            &nbsp;
-            <img src="/images/AutoGlass.png"/>
-          </p>
-       </div>
-      </div>
+          <p>Call For An Install Appointment!<br/>
+          Call For A Quote!<br/>
+          M-F 8AM-5PM</p>
 
-      <div class="row">
-        
-        <div class="columns large-6">
           <h2>What We Do</h2>
-          <div class="panel">
             <ul>
               <li>Full windshields</li>
               <li>Door glass</li>
               <li>Windshield chip repair</li> 
               <li>PLUS the insurance paperwork!</li> 
             </ul>
-          </div>
-        </div>
-        <div class="columns large-6">
-          <h2>How We Do It</h2>
-          <div class="panel">
-            <ul>
-              <li>Mobile installation - we come to you</li>
-              <li>Same day service possible</li>
-              <li>Large inventory of parts available</li>
-            </ul>
-          </div>
-        </div>
 
+          <h2>How We Do It</h2>
+          <ul>
+            <li>Mobile installation - we come to you</li>
+            <li>Same day service possible</li>
+            <li>Large inventory of parts available</li>
+          </ul>
+        </div>
+        <div class="columns large-7">
+          <p>
+            &nbsp;
+            <img src="/images/AutoGlass.png"/>
+          </p>
+       </div>
       </div>
     </div>
  
@@ -54,21 +92,16 @@
           </p>
           <p>
           Need something to drive while we fix your vehicle?
-          TEAM1 Auto Body &amp; Glass has a long term partnership with Enterprise-Rent-A-Car. </p>
-        </div>
-      </div>
-      <div class="row">
-        <div class="columns large-8">
+          TEAM1 Auto Body &amp; Glass has a long term partnership with Enterprise-Rent-A-Car.
+          </p>
           <h3>Need A Rental?</h3>
           <div class="">
             We can schedule to have it ready when you drop your vehicle off for repairs. Let us know what you need
             and we can handle it.
           </div>
         </div>
-        <div class="columns large-4">
-        </div>
       </div>
-      <div class="row ">
+     <div class="row ">
         <div class="columns large-12 action-button">
           <a href="/fixed-now" class="small round button alert fill">Schedule a Repair with a Rental Car Now!</a>
         </div>
@@ -186,11 +219,11 @@
         <div class="columns large-9">
          <p class="title-content">
             You probably don't need an estimate if you are planning on filing an
-            insurance claim. We handle working the details out with the insurance company.
+            insurance claim. We can handle working the details out with the insurance company.
             You've already "paid" for it to be fixed right and that's what we will do.
           </p>
           <p>
-            If you aren't sure about filing a claim or if you want a free estimate for any reason. Choose from below:
+            If you aren't sure about filing a claim, or if you want a free estimate for any reason, choose from below:
         </div>
       </div>
       <div class="row">
@@ -225,17 +258,16 @@
           </div>
         </div>
         <div class="columns large-4">
-          <h3>By Email</h3>
+          <h3>We Come To You</h3>
           <div class="panel">
             <p>
-            Free estimates by email. Do it all online! Send us some pictures
-            of your vehicle plus some basic info and we'll email you an estimate!
+            Need an estimate, but don't have time to come to us? We'll come to you!
             </p>
 
             <p>
-            Get estimte online:
+            Your work or home:
             </p>
-            <a href="#" class="small round button alert">ESTIMATE by EMAIL</a>
+            <a href="/we-come-to-you" class="small round button alert">Have Someone Come To Me!</a>
           </div>
         </div>
       </div>
@@ -329,6 +361,42 @@
         </div>
 
         <div class="columns large-8">
+        </div>
+      </div>
+    </div>
+
+
+
+    <div id="singleShop">
+      <div class="row">
+        <div class="columns large-4">
+          <p>
+            <div class="panel">
+              <div id="shop" itemscope itemtype="http://data-vocabulary.org/Organization">
+                <h5 itemprop="name">Title</h5>
+                <div itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">
+                   <div itemprop="street-address">123 Main</div>
+                   <span itemprop="locality">St. Louis</span>,
+                   <span itemprop="region">MO</span>
+                   <span itemprop="postal-code">12345</span>
+                </div>
+                <p>
+                  <a itemprop="tel" href="/">Call</a>
+                </p>
+                
+                <p id="hours">M-F 8AM-5PM</p>
+              </div>
+            </div>
+        </p>
+        </div>
+
+        <div class="columns large-8">
+          <div id="detailMap">
+            <p>
+              &nbsp;
+              <img src=""/>
+            </p>
+          </div>
         </div>
       </div>
     </div>

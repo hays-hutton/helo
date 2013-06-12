@@ -55,8 +55,34 @@
 (defn post-referrals [{params :params}]
   (create-referral params))
 
+(def web-referral
+  (-> (dc/post)
+      (creation-response)
+      (rfr/add-defaults)
+      (rfr/add-cchan :referral/er-tag :referral/er-cchannel :cchannel.type/unknown )
+      (rfr/add-cchan :referral/ee-tag :referral/ee-cchannel :cchannel.type/unknown)
+      (rfr/add-note)
+      (dc/add-key)
+      (dc/translate-keys rfr/ez-to-attr)
+      (dc/min-required-keys rfr/required-record-keys)
+      (dc/valid-keys rfr/valid-keys)
+      (dc/remove-empty-keys)))
+
+(defn post-we-come-to-you [{params :params}]
+  (println "post-we:" params)
+  (let [eePhone (if-not (empty? (params :phone)) (params :phone))
+        eeEmail (if-not (empty? (params :email)) (params :email))
+        eeTag (or eePhone eeEmail)
+]
+  
+  (if eeTag 
+    (web-referral (assoc params :erTag "+19015505058" :eeTag eeTag ))
+    {:status 400 :body "bad request need at least a contact"}
+)
+  )
+)
+
 (defn post-referral [{params :params}]
   (println "update:" params)
   (update-referral params)
-
 )
